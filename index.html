@@ -520,7 +520,9 @@ button.rowp{width:100%;font:inherit;color:inherit;background:none;border:0;borde
 @keyframes rise{from{transform:scale(.92) translateY(14px);opacity:0}to{transform:none;opacity:1}}
 .rq.one.enter{animation:rise .36s cubic-bezier(.2,.8,.2,1) both}
 
-.screen[data-screen="requests"],.screen[data-screen="profile-view"]{overflow:hidden}
+.screen[data-screen="profile-view"]{overflow:hidden}
+.screen[data-screen="requests"]{padding:0;gap:0;overflow:hidden;position:relative}
+.ar-body{position:absolute;inset:0}
 #pv-body,#requests-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
 #pv-body>div,#requests-body>div{flex:1 1 auto;min-height:0;display:flex!important;flex-direction:column;gap:10px!important}
 .rq.one{flex:1 1 auto;min-height:0;margin-bottom:0;display:flex;flex-direction:column}
@@ -822,6 +824,31 @@ button.rowp{width:100%;font:inherit;color:inherit;background:none;border:0;borde
 .fc-tag.vip-tag{background:linear-gradient(135deg,#FFE9A8,#D9A441);color:#2A1A00}
 .fc.vip .fc-go:not(.on){background:linear-gradient(135deg,#FFE9A8,#D9A441);color:#2A1A00}
 @media (prefers-reduced-motion:reduce){.vip-frame{animation:none}}
+/* Around as reels */
+.fc.ar .ar-pics{position:absolute;inset:0}
+.fc.ar .ar-pics .fc-bg{opacity:0;transition:opacity .25s;mix-blend-mode:normal}.fc.ar .ar-pics .fc-bg.on{opacity:1}
+.fc.ar .ar-pics .fc-bg{filter:none}
+.ar-ini{position:absolute;inset:0;display:grid;place-items:center;font:900 160px var(--font-display);color:rgba(255,255,255,.25);background:linear-gradient(160deg,hsl(var(--h) 45% 35%),#111)}
+.ar-shade{background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 45%,rgba(0,0,0,.92) 100%) !important}
+.ar-bars{position:absolute;top:100px;left:16px;right:16px;z-index:3;display:flex;gap:4px}.ar-bars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.35)}.ar-bars i.on{background:#fff}
+.ar-tap{position:absolute;top:110px;bottom:45%;z-index:2;width:45%;border:0;background:none;cursor:pointer}.ar-tap.l{left:0}.ar-tap.r{right:0}
+.ar-com,.ar-added{position:absolute;top:116px;right:16px;z-index:3;font:800 13px var(--font-ui);padding:6px 12px;border-radius:999px;background:#C6FF00;color:#111}
+.ar-added{background:#fff}
+.fc.ar .fc-bot{gap:7px}.fc.ar .sch-badge{align-self:flex-start;margin-bottom:2px}
+.ar-name{font-size:64px !important;text-transform:none !important}
+.ar-bio,.ar-say{margin:0;font-size:14.5px;line-height:1.35;color:rgba(255,255,255,.88);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.ar-say{font-weight:700;font-size:16px}
+.ar-chips{display:flex;flex-wrap:wrap;gap:6px}.ar-chips span{font:700 12px var(--font-ui);padding:5px 10px;border-radius:999px;background:rgba(198,255,0,.18);border:1px solid rgba(198,255,0,.55);color:#E9FFB0}
+.fc.ar .fc-acts .ar-skip{flex:0 0 34%}.fc.ar .ar-add{background:#C6FF00;color:#111}
+.fc.ar.fly-r{transform:translateX(110%) rotate(6deg);transition:transform .32s ease-in}
+.fc.ar.fly-l{transform:translateX(-110%) rotate(-6deg);transition:transform .32s ease-in}
+.fc.ar-end .fc-t{font-size:52px}.ar-top .picks i em{background:rgba(255,255,255,.3)}.ar-top .picks i em.on{background:#C6FF00}
+.fc.ar-end{background:linear-gradient(160deg,#1b1b1f,#2b2236);justify-content:center}.fc.ar-end .fc-bot{padding-bottom:40px}
+.ar-top .feed-sch{font:900 26px var(--font-display);text-transform:lowercase;color:#fff;pointer-events:none}
+.ar-r{display:flex;align-items:center;gap:8px;pointer-events:auto}
+.ar-top .picks{background:rgba(0,0,0,.4);color:#fff;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(8px)}
+.ar-top .crushtop{background:rgba(0,0,0,.4);border-color:rgba(255,255,255,.3);color:#fff}
+.ar-note{margin:0;font:600 12px var(--font-ui);color:rgba(255,255,255,.8)}
+#ar-feed{position:absolute;inset:0;height:auto}#ar-feed>.fc{height:100%;min-height:100%}
 /* spots */
 .fc.spots .clubs-in{gap:12px}
 .sp-list{display:flex;flex-direction:column;gap:8px}
@@ -1794,8 +1821,7 @@ button.hrow{width:100%;font:inherit;color:inherit;background:none;border:0;text-
   </section>
 
   <section class="screen" data-screen="requests">
-    <header class="top compact"><div><h2 class="h-display">Around</h2></div><span id="rq-crush"></span></header>
-    <div id="requests-body"></div>
+    <div id="requests-body" class="ar-body"></div>
   </section>
 
   <section class="screen" data-screen="chats">
@@ -2670,7 +2696,7 @@ function boom(el){if(matchMedia('(prefers-reduced-motion: reduce)').matches)retu
   try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
 function fitTitle(h,max,min){if(!h)return;let fs=max;h.style.fontSize=fs+'px';while(h.scrollWidth>h.clientWidth&&fs>min){fs-=2;h.style.fontSize=fs+'px'}}
 function convos(){const ids=[...new Set([...Object.keys(CHATS),...Object.keys(S.msgs||{})])];return ids.map(id=>({id,p:P(id),m:[...(CHATS[id]||[]),...((S.msgs||{})[id]||[])]})).filter(c=>c.m.length)}
-function leave(el,dir,done){const art=el.closest('article.rq');if(art&&art.dataset.flown){done();const n=document.querySelector('article.rq.one');if(n)n.classList.add('enter');return}if(!art||matchMedia('(prefers-reduced-motion: reduce)').matches){done();return}art.classList.add('leave-'+dir);if(dir!=='l')art.style.height=art.offsetHeight+'px';requestAnimationFrame(()=>art.classList.add('gone'));setTimeout(()=>{done();const n=document.querySelector('article.rq.one');if(n)n.classList.add('enter')},330)}
+function leave(el,dir,done){const rc=el.closest('.fc.ar');if(rc){rc.classList.add('fly-'+dir);setTimeout(done,320);return}const art=el.closest('article.rq');if(art&&art.dataset.flown){done();const n=document.querySelector('article.rq.one');if(n)n.classList.add('enter');return}if(!art||matchMedia('(prefers-reduced-motion: reduce)').matches){done();return}art.classList.add('leave-'+dir);if(dir!=='l')art.style.height=art.offsetHeight+'px';requestAnimationFrame(()=>art.classList.add('gone'));setTimeout(()=>{done();const n=document.querySelector('article.rq.one');if(n)n.classList.add('enter')},330)}
 function renderChats(){
   const cs=convos();
   let h='';
@@ -2713,22 +2739,33 @@ function meetCard(p,i,opts,peek){let h=profileCard(p,i,opts);const com=commonWit
   if((com.length||rest)&&!opts.low)h=h.replace('<div class="actions">',`<p class="common">${com.map(x=>`<span>${esc(x)}</span>`).join('')}${rest}</p><div class="actions round">`);else h=h.replace('<div class="actions">','<div class="actions round">');
   if(peek)h=h.replace('class="rq one','class="rq one peek').replace(/data-action="[^"]*"/g,'');
   return h}
-function renderRequests(){stopMeetT();
-  const me=S.me;let h='<div style="display:flex;flex-direction:column;gap:10px">';const md=meetDay(),ml=meetLeft(),left=ml.left;
+function aroundRank(){const me=S.me,skip=new Set([...S.out.map(r=>r.pid),...S.conn,...(S.passed||[])]),hosts=new Set(EVENTS.map(e=>e.host)),mode=S.theme;
+  let rank=PEOPLE.filter(p=>visible(p)&&!skip.has(p.id)&&aroundOk(p)&&p.p!=='discreto').map(p=>({p,score:(p.mu||0)*2+((p.s||[]).some(x=>(me.s||[]).includes(x))?3:0)+(p.m===me.m?2:0)+sharedCls(p).length*3+(mode==='jock'&&(p.s||[]).length?6:0)+(mode==='geek'&&(p.m===me.m||/Computer|Engineering|Data|Math|Physics/.test(p.m))?6:0)+(mode==='festa'&&hosts.has(p.id)?6:0)+(mode==='eng'&&/Engineer|Architect/.test(p.m)?6:0)+(mode==='med'&&/Bio|Nurs|Med|Psych|Chem/.test(p.m)?6:0)})).sort((a,b)=>b.score-a.score).map(x=>x.p);
+  if(!rank.length){const keep=new Set([...S.out.map(r=>r.pid),...S.conn]);if(PEOPLE.some(p=>visible(p)&&!keep.has(p.id)&&aroundOk(p)&&p.p!=='discreto')&&(S.passed||[]).length){S.passed=[];save();return aroundRank()}}
+  return rank}
+function arCard(p,i,o){const c=C(p.c),com=commonWith(p),pics=[p.img,p.img2,p.img3].filter(Boolean);
+  return `<section class="fc ar${o.inc?' inc':''}" data-i="${i}" data-pid="${p.id}"><div class="ar-pics" data-n="${pics.length}">${pics.length?pics.map((src,k)=>`<img class="fc-bg${k?'':' on'}" src="${src}" alt="" onerror="this.remove()">`).join(''):`<div class="ar-ini" style="--h:${hue(p.n)}">${esc(initials(p.n))}</div>`}</div>
+    <div class="fc-shade ar-shade"></div>${pics.length>1?`<div class="ar-bars">${pics.map((_,k)=>`<i class="${k?'':'on'}"></i>`).join('')}</div><button class="ar-tap l" data-action="ar-pic" data-id="-1" aria-label="Previous photo"></button><button class="ar-tap r" data-action="ar-pic" data-id="1" aria-label="Next photo"></button>`:''}
+    ${o.inc?`<span class="ar-added">${esc(p.n.split(' ')[0])} added you</span>`:com.length?`<span class="ar-com">${com.length} in common</span>`:''}
+    <div class="fc-bot"><span class="sch-badge" style="--col:${c.col}">${crest(c.id,'sm')}<b>${esc(c.name)}</b>${p.c===S.me.c?'<em>your school</em>':''}</span>
+      <h3 class="fc-t ar-name">${esc(p.n.split(' ')[0])}</h3><p class="fc-where">${[p.m,p.y].filter(Boolean).map(esc).join(' · ')}${p.mu?` · ${p.mu} mutual`:''}</p>
+      ${o.msg?`<p class="ar-say">“${esc(o.msg)}”</p>`:p.b?`<p class="ar-bio">${esc(p.b)}</p>`:''}
+      ${com.length?`<div class="ar-chips">${com.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
+      <div class="fc-acts">${o.inc?`<button class="fc-more ar-skip" data-action="decline" data-id="${p.id}">skip</button><button class="fc-go ar-add" data-action="accept" data-id="${p.id}">add back</button>`:`<button class="fc-more ar-skip" data-action="pass" data-id="${p.id}">skip</button><button class="fc-go ar-add" data-action="intro" data-id="${p.id}">+ add</button>`}</div></div></section>`}
+function renderRequests(){stopMeetT();if(window.arIO){arIO.disconnect();arIO=null}
+  const me=S.me,ml=meetLeft(),left=ml.left,cards=[];
+  S.inc.forEach(r=>{const p=P(r.pid);if(p)cards.push(arCard(p,cards.length,{inc:1,msg:r.msg}))});
+  aroundRank().slice(0,left).forEach(p=>cards.push(arCard(p,cards.length,{})));
+  let end;
+  if(!left&&!ml.fresh)end=`<h3 class="fc-t">seen<br>everyone</h3><p class="fc-where">${early()?'Check back tomorrow, or bring people you already know.':'More schools open as their waitlists fill.'}</p><div class="fc-acts"><button class="fc-go" data-action="contacts">People you already know</button></div>`;
+  else if(!left)end=`<h3 class="fc-t">that's it<br>for today</h3><p class="fc-where">New faces in <b id="meet-cd">${untilMidnight()}</b></p><div class="fc-acts"><button class="fc-go" data-action="meet-more">Get 5 more: invite a friend</button></div>`;
+  else end=`<h3 class="fc-t">that's<br>today</h3><p class="fc-where">New faces tomorrow. Bring people you already know in the meantime.</p><div class="fc-acts"><button class="fc-go" data-action="contacts">People you already know</button></div>`;
+  cards.push(`<section class="fc ar-end" data-i="${cards.length}"><div class="fc-bot">${end}</div></section>`);
   const picks=`<span class="picks"><i>${Array.from({length:ml.tot},(_,k)=>`<em class="${k<left?'on':''}"></em>`).join('')}</i>${left} left</span>`;
-  let cid=null;
-  if(S.inc.length){const r=S.inc[0],nx=S.inc[1];cid=r.pid;
-    h+=`<div class="meet-top"><p class="lbl">${S.inc.length} ${S.inc.length===1?'person':'people'} added you</p></div><div class="deck">${meetCard(P(r.pid),0,{msg:r.msg,actions:`<button class="rbtn no" data-action="decline" data-id="${r.pid}" aria-label="Not now">skip</button><button class="rbtn yes acc" data-action="accept" data-id="${r.pid}" aria-label="Add back">add back</button>`})}${nx?meetCard(P(nx.pid),1,{msg:nx.msg,actions:''},true):''}</div>`}
-  else if(!left&&!ml.fresh){h+=`<div class="outcard"><h3>you've seen<br>everyone so far</h3><p class="sub" style="margin:0">${early()?'Check back tomorrow, or bring people you already know.':`${PEOPLE.filter(visible).length} people on across ${LAUNCH.length} schools. More open as their waitlists fill.`}</p><button class="btn primary" data-action="contacts">People you already know</button><button class="linkbtn" data-action="copy" data-text="${myLink()}">or share your link</button></div>`}
-  else if(!left){h+=`<div class="outcard"><h3>that's everyone<br>for today</h3><p class="sub" style="margin:0">New people in</p><span class="cd" id="meet-cd">${untilMidnight()}</span><button class="btn primary" data-action="meet-more">Get 5 more: invite a friend</button><button class="linkbtn" data-action="browse-go">${early()?'or search by name':'or browse everyone'}</button></div>`}
-  else{const skip=new Set([...S.out.map(r=>r.pid),...S.conn,...(S.passed||[])]);
-    const hosts=new Set(EVENTS.map(e=>e.host)),mode=S.theme;
-    const rank=PEOPLE.filter(p=>visible(p)&&!skip.has(p.id)&&aroundOk(p)&&p.p!=='discreto').map(p=>({p,score:(p.mu||0)*2+((p.s||[]).some(x=>(me.s||[]).includes(x))?3:0)+(p.m===me.m?2:0)+sharedCls(p).length*3+(mode==='jock'&&(p.s||[]).length?6:0)+(mode==='geek'&&(p.m===me.m||/Computer|Engineering|Data|Math|Physics/.test(p.m))?6:0)+(mode==='festa'&&hosts.has(p.id)?6:0)+(mode==='eng'&&/Engineer|Architect/.test(p.m)?6:0)+(mode==='med'&&/Bio|Nurs|Med|Psych|Chem/.test(p.m)?6:0)})).sort((a,b)=>b.score-a.score).map(x=>x.p);
-    if(!rank.length){const keep=new Set([...S.out.map(r=>r.pid),...S.conn]);const back=PEOPLE.filter(p=>visible(p)&&!keep.has(p.id)&&aroundOk(p)&&p.p!=='discreto');if(back.length){S.passed=[];save();return renderRequests()}}
-    const [a,b]=rank;
-    h+=`<div class="meet-top"><p class="lbl">Around today · swipe ← →</p>${picks}</div>${early()?`<p class="fine" style="margin:-4px 0 0">${pickCap()} new faces a day until ${esc(C(me.c).short)} hits ${FULL_AT}.</p>`:''}`+(a?`<div class="deck">${meetCard(a,0,{actions:`<button class="rbtn no" data-action="pass" data-id="${a.id}" aria-label="Skip">skip</button><button class="rbtn yes" data-action="intro" data-id="${a.id}" aria-label="Add">+ add</button>`})}${b?meetCard(b,1,{actions:''},true):''}</div>`:`<div class="ghostcard">That\'s it for today. More people tomorrow.</div>`);cid=a&&a.id}
-  $('#requests-body').innerHTML=h+'</div>';
-  {const on=cid&&(S.crush||[]).includes(cid);$('#rq-crush').innerHTML=cid?`<button class="crushtop${on?' on':''}" data-action="crush" data-id="${cid}" aria-label="Secret crush on ${esc(P(cid).n.split(' ')[0])}"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>`:''}
+  $('#requests-body').innerHTML=`<div class="feed" id="ar-feed">${cards.join('')}</div><div class="feed-top ar-top"><div class="ft-row"><span class="feed-sch">around</span><span class="ar-r">${picks}<span id="rq-crush"></span></span></div>${early()?`<p class="ar-note">${pickCap()} new faces a day until ${esc(C(me.c).short)} hits ${FULL_AT}</p>`:''}</div>`;
+  const feed=$('#ar-feed'),setCur=pid=>{const on=pid&&(S.crush||[]).includes(pid),el=$('#rq-crush');if(el)el.innerHTML=pid?`<button class="crushtop${on?' on':''}" data-action="crush" data-id="${pid}" aria-label="Secret crush"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>`:''};
+  window.arIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&e.intersectionRatio>.6){e.target.classList.add('in');setCur(e.target.dataset.pid)}}),{root:feed,threshold:[.6]});
+  feed.querySelectorAll('.fc').forEach(el=>arIO.observe(el));setCur(cards.length>1?(S.inc[0]&&S.inc[0].pid)||(feed.querySelector('.fc.ar')||{}).dataset&&feed.querySelector('.fc.ar').dataset.pid:null);
   if(!S.inc.length&&!left){meetT=setInterval(()=>{const c=$('#meet-cd');if(!c||S.tab!=='requests'){stopMeetT();return}c.textContent=untilMidnight()},1000)}
 }
 let meetT=null;function stopMeetT(){clearInterval(meetT);meetT=null}
@@ -3080,7 +3117,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v138</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v139</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3383,6 +3420,7 @@ function init(){
     if(a==='house'){S.sheet={type:'house',id};render();return}
     if(a==='house-all'){S.sheet={type:'house-all'};render();return}
     if(a==='house-ask'){S.houseAsk=[...new Set([...(S.houseAsk||[]),id])];save();renderSheet();const h=P(HS(id).by);toast(`Sent. ${h?esc(h.n.split(' ')[0])+' sees':'They see'} you're a verified ${esc(C(S.me.c).short)} student.`);return}
+    if(a==='ar-pic'){const sec=el.closest('.fc.ar'),ims=[...sec.querySelectorAll('.ar-pics img')],bars=[...sec.querySelectorAll('.ar-bars i')];let k=ims.findIndex(x=>x.classList.contains('on'));k=Math.max(0,Math.min(ims.length-1,k+(+id)));ims.forEach((x,j)=>x.classList.toggle('on',j===k));bars.forEach((x,j)=>x.classList.toggle('on',j<=k));return}
     if(a==='me-tab'){S.meTab=id;renderMe();save();return}
     if(a==='to-meet'){S.tab='requests';S.sheet=null;render();return}
     if(a==='proto-reset'){if(el.dataset.armed){try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}el.dataset.armed='1';const t=el.textContent;el.textContent='Tap again to start over';setTimeout(()=>{delete el.dataset.armed;el.textContent=t},3000);return}
