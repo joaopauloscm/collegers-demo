@@ -202,6 +202,14 @@ input#code{font-family:var(--font-display);font-weight:800;font-size:40px;letter
 .jchips{display:flex;flex-wrap:wrap;gap:8px}
 .jpic{align-self:center;width:200px;height:250px;border-radius:24px;border:2px dashed var(--line-2);background:hsl(var(--h) 30% 50% / .14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;overflow:hidden;padding:0;color:var(--fg)}
 .jpic img{width:100%;height:100%;object-fit:cover}.jini{font:800 64px var(--font-display);color:var(--fg)}.jpic small{font-size:13px;color:var(--fg-3)}
+/* side controls, desktop only */
+.side-ctl{position:fixed;left:24px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:8px;width:190px}
+.side-ctl p{margin:0 0 2px;font:700 11px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:#888}
+.side-ctl button{font:600 14px var(--font-ui);text-align:left;padding:11px 14px;border-radius:12px;border:1px solid rgba(128,128,128,.35);background:rgba(255,255,255,.85);color:#111;cursor:pointer}
+.side-ctl button:hover{background:#fff;border-color:#111}
+.side-ctl button:first-of-type{background:#111;color:#fff;border-color:#111}
+.side-ctl small{font-size:11.5px;color:#888;line-height:1.35}
+@media (max-width:900px){.side-ctl{display:none}}
 /* welcome: photo wall */
 .welcome{position:relative;overflow:hidden;background:#0d0d0f}
 .wl-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 6px;transform:rotate(-6deg) scale(1.25);opacity:.9}
@@ -1641,6 +1649,11 @@ button.hrow{width:100%;font:inherit;color:inherit;background:none;border:0;text-
 </style>
 
 <div class="stage">
+<aside class="side-ctl" aria-label="Prototype controls"><p>Prototype</p>
+  <button type="button" onclick="try{localStorage.removeItem(KEY)}catch(e){};location.reload()">Restart from the start</button>
+  <button type="button" onclick="if(!S.me){return}toggleSim(!S.simEmpty)" id="side-sim">Day one mode: off</button>
+  <small>Restart clears everything saved in this browser.</small>
+</aside>
 <div class="phone" id="phone">
 
   <section class="screen welcome" data-screen="welcome">
@@ -2393,7 +2406,7 @@ function render(){if(!PALS[S.theme])S.theme='mono';document.documentElement.data
   $('#tabbar').hidden=S.stage!=='app';
   document.querySelectorAll('.tab').forEach(t=>{const on=t.dataset.tab===S.tab||(t.dataset.tab==='people'&&(S.tab==='chats'||S.tab==='chat'||S.tab==='hype'||S.tab==='requests'))||(S.tab==='pv'&&t.dataset.tab===S.pvFrom)||(t.dataset.tab==='college'&&(S.tab==='party'||S.tab==='newparty'||S.tab==='team'||S.tab==='ranked'))||(t.dataset.tab==='me'&&S.tab==='settings')||(t.dataset.tab==='college'&&S.tab==='game');t.classList.toggle('on',on);t.setAttribute('aria-current',on?'page':'false')});
   $('#req-dot').hidden=!S.inc.length;
-  if(S.stage==='profile')fillProfile();if(S.stage==='join')renderJoin();if(S.stage==='tutorial')renderTut();else stopTut();
+  if(S.stage==='profile')fillProfile();if(S.stage==='join')renderJoin();sideSync();if(S.stage==='tutorial')renderTut();else stopTut();
   if(S.stage==='welcome')requestAnimationFrame(startSky);else stopSky();if(document.fonts&&!fontsHooked){fontsHooked=true;document.fonts.addEventListener('loadingdone',()=>{if(S.stage==='welcome')fitWordmark();if(S.stage==='app'&&S.tab==='map')repaint()})}
   if(S.stage==='app'){if(S.tab==='map'){renderMap();liveTick()}else stopLive();if(S.tab==='people')renderPeople();if(S.tab==='college')renderCollege();else stopFeed();if(S.tab==='requests')renderRequests();if(S.tab==='chats')renderChats();if(S.tab==='quests')renderQuests();if(S.tab==='hype')renderHype();if(S.tab==='ranked')renderRanked();if(S.tab==='party')renderParty();else stopParty();if(S.tab==='newparty')renderNewParty();if(S.tab==='team')renderTeam();if(S.tab==='pv')renderPV();if(S.tab==='chat')renderChat();if(S.tab==='me'){renderMe();meT=setInterval(()=>{const c=$('#streak-cd');if(S.tab!=='me'){stopMe();return}if(c)c.textContent=untilMidnight()},1000)}else stopMe();if(S.tab==='settings')renderSettings();if(S.tab==='game')renderGame();else stopGame()}
   renderSheet();save();
@@ -2983,7 +2996,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v132</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v133</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3360,6 +3373,7 @@ function init(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.sheet){S.sheet=null;render()}});
 }
 /* ---------- welcome: moving photo wall, schools, live count ---------- */
+function sideSync(){const b=document.getElementById('side-sim');if(b){b.textContent='Day one mode: '+(S.simEmpty?'on':'off');b.hidden=!S.me}}
 function fillWelcome(){const bg=$('#wl-bg'),lv=$('#wl-live');if(!bg||bg.dataset.on)return;bg.dataset.on=1;
   const cols=[['party-crowd','f14','sport-soccer','m05','party-concert','a11'],['f12','scene-lawn','m02','party-girls','a05','f05'],['sport-bball','f09','party-cups','m08','scene-grads','f03']];
   bg.innerHTML=cols.map((c,i)=>`<div class="wl-col c${i}"><div class="wl-track">${[...c,...c].map(x=>`<img src="photos/${x}.jpg" alt="" loading="eager" onerror="this.remove()">`).join('')}</div></div>`).join('');
