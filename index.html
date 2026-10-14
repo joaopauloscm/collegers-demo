@@ -202,6 +202,23 @@ input#code{font-family:var(--font-display);font-weight:800;font-size:40px;letter
 .jchips{display:flex;flex-wrap:wrap;gap:8px}
 .jpic{align-self:center;width:200px;height:250px;border-radius:24px;border:2px dashed var(--line-2);background:hsl(var(--h) 30% 50% / .14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;overflow:hidden;padding:0;color:var(--fg)}
 .jpic img{width:100%;height:100%;object-fit:cover}.jini{font:800 64px var(--font-display);color:var(--fg)}.jpic small{font-size:13px;color:var(--fg-3)}
+/* friends: Around hero card + compact streak */
+.ar-hero{position:relative;display:flex;align-items:center;gap:14px;width:100%;min-height:118px;padding:14px 16px 14px 118px;border-radius:22px;border:0;cursor:pointer;text-align:left;color:#fff;font:inherit;background:linear-gradient(135deg,#1b1b1f,#2b2236);overflow:hidden;margin:4px 0 6px}
+.ar-card{position:absolute;top:14px;width:62px;height:88px;border-radius:12px;overflow:hidden;background:#444;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.4);border:2px solid #fff}
+.ar-card img{width:100%;height:100%;object-fit:cover}.ar-card b{font:800 22px var(--font-display);color:#fff}
+.ar-card.k0{left:14px;transform:rotate(-8deg);z-index:1}.ar-card.k1{left:34px;transform:rotate(2deg);z-index:2}.ar-card.k2{left:52px;transform:rotate(10deg);z-index:3}
+.ar-txt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ar-txt b{font:900 30px/1 var(--font-display)}.ar-txt small{font-size:12.5px;color:rgba(255,255,255,.75)}
+.ar-tag{align-self:flex-start;font:800 10.5px var(--font-ui);letter-spacing:.06em;text-transform:uppercase;background:#C6FF00;color:#111;border-radius:999px;padding:3px 8px;margin-bottom:4px}
+.ar-go{font-size:30px;line-height:1;opacity:.8}
+.streak.mini{flex-direction:row;align-items:center;gap:10px;padding:10px 14px;border:0;width:100%;text-align:left;font:inherit;cursor:pointer;border-radius:18px}
+.streak.mini.safe{border:1px solid var(--line)}
+.streak.mini .streak-fire{font-size:26px}
+.streak.mini .t{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
+.streak.mini b{font:900 19px/1 var(--font-display);text-transform:lowercase}
+.sw-mini{display:flex;gap:4px}.sw-mini i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3)}.sw-mini i.on{background:#fff}.sw-mini i.today{box-shadow:0 0 0 1.5px #fff}
+.streak.mini.safe .sw-mini i{background:var(--night-3)}.streak.mini.safe .sw-mini i.on{background:#FF3D7F}
+.streak.mini .streak-cd{font-size:13px;padding:5px 8px}.streak.mini small.ok{font-size:12px;color:var(--fg-3)}
 /* side controls, desktop only */
 .side-ctl{position:fixed;left:24px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:8px;width:190px}
 .side-ctl p{margin:0 0 2px;font:700 11px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:#888}
@@ -2442,7 +2459,7 @@ function friendActivity(mine){const it=[],fn=p=>esc(p.n.split(' ')[0]);
   DROP_SAMPLE.filter(x=>mine.has(x.id)).slice(0,2).forEach(x=>{const p=P(x.id),seen=dropState().seen.includes(x.id);it.push({faces:[p],t:`<b>${fn(p)}</b> dropped a pic`,s:seen?'opened':`${esc(x.w)} · opens once`,th:`photos/${x.img}.jpg`,bl:!seen,a:'drop-open',id:x.id})});
   return it.slice(0,4).map((x,k)=>`<button class="act" data-action="${x.a}" data-id="${x.id}" style="animation-delay:${k*60}ms"><span class="hfaces">${x.faces.map(p=>avatar(p)).join('')}</span><span class="t">${x.t}<small>${x.s}</small></span>${x.th?`<span class="act-th${x.bl?' bl':''}"><img src="${x.th}" alt="" loading="lazy" onerror="this.remove()"></span>`:''}</button>`).join('')}
 function meetRow(){const md=meetDay(),ml=meetLeft(),left=ml.left,inc=S.inc.map(r=>P(r.pid)).filter(Boolean),skip=new Set([...S.out.map(r=>r.pid),...S.conn,...(S.passed||[])]),picks=PEOPLE.filter(p=>visible(p)&&!skip.has(p.id)&&aroundOk(p)&&p.p!=='discreto').slice(0,3);
-  return `<div class="meetrow">${inc.length?`<button class="mr in" data-action="to-meet"><span class="hfaces">${inc.slice(0,3).map(p=>avatar(p)).join('')}</span><span class="t"><b>${inc.length} added you</b><small>add back ›</small></span></button>`:''}<button class="mr" data-action="to-meet"><span class="hfaces">${picks.map(p=>avatar(p)).join('')}</span><span class="t"><b>Around today</b><small>${left?`${left} new ${left===1?'face':'faces'} ›`:ml.fresh?'back tomorrow':'seen everyone so far'}</small></span></button></div>`}
+  return `<div class="meetrow">${inc.length?`<button class="mr in" data-action="to-meet"><span class="hfaces">${inc.slice(0,3).map(p=>avatar(p)).join('')}</span><span class="t"><b>${inc.length} added you</b><small>add back ›</small></span></button>`:''}</div><button class="ar-hero" data-action="to-meet">${picks.slice(0,3).map((p,k)=>`<span class="ar-card k${k}">${p.img?`<img src="${p.img}" alt="" onerror="this.remove()">`:`<b>${esc(initials(p.n))}</b>`}</span>`).join('')}<span class="ar-txt"><span class="ar-tag">swipe</span><b>Around</b><small>${left?`${left} new ${left===1?'face':'faces'} today · your school and others`:ml.fresh?'back tomorrow':'seen everyone so far'}</small></span><span class="ar-go">›</span></button>`}
 function renderPeople(){
   const q=S.q.trim().toLowerCase(),browse=!!S.browse;
   const nc=convos().length;$('#chat-dot').hidden=!nc;$('#chat-dot').textContent=nc;
@@ -2865,7 +2882,7 @@ const clsPool=m=>(CLS_POOL.find(([r])=>r.test(m||''))||[0,['Intro to Psych','Pub
 const clsOf=p=>{if(p===S.me||p.id==='me')return S.me.cls||(S.me.cls=[...new Set([...clsPool(S.me.m).slice(0,2),'Intro to Stats'])]);const pool=clsPool(p.m),h=hsh(p.n);return [pool[h%5],pool[(h>>>3)%5],pool[(h>>>6)%5]].filter((x,i,a)=>x&&a.indexOf(x)===i)};
 const sharedCls=p=>clsOf(p).filter(x=>clsOf(S.me).includes(x));
 const bigMe=()=>!!C(S.me.c).big;
-const aroundOk=p=>p.c!==S.me.c||(bigMe()&&sharedCls(p).length>0);
+const aroundOk=p=>p.id!=='me';
 function classRow(){if(!bigMe())return'';const mine=new Set(myIds()),skip=new Set([...S.out.map(r=>r.pid),...S.conn]);const ps=PEOPLE.filter(p=>p.c===S.me.c&&visible(p)&&p.p!=='discreto'&&!mine.has(p.id)&&!skip.has(p.id)&&sharedCls(p).length).slice(0,8);if(!ps.length)return'';
   return `<section class="fr-sec"><h3>Same class? <span style="font:500 13px var(--font-ui);color:var(--fg-3)">${esc(C(S.me.c).short)}</span></h3><div class="clsrow">${ps.map(p=>`<div class="clsc"><button class="clsp" data-action="person" data-id="${p.id}">${avatar(p,true)}<b>${esc(p.n.split(' ')[0])}</b><small>${esc(sharedCls(p)[0])}</small></button>${requested(p.id)?'<span class="sval">added</span>':`<button class="btn sm primary" data-action="intro" data-id="${p.id}">+ add</button>`}</div>`).join('')}</div></section>`}
 /* ---------- join: first experience (name, school, major, photo) ---------- */
@@ -2996,7 +3013,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v133</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v134</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3014,6 +3031,7 @@ let meT=null;function stopMe(){clearInterval(meT);meT=null}
 function untilMidnight(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);let ms=m-n;const z=x=>String(x).padStart(2,'0');return z(Math.floor(ms/36e5))+':'+z(Math.floor(ms%36e5/6e4))+':'+z(Math.floor(ms%6e4/1e3))}
 function streakCard(){const n=streakN(),days=new Set(streakDays()),safe=days.has(dkey(new Date())),t=new Date(),dow=(t.getDay()+6)%7,mon=new Date(t);mon.setDate(t.getDate()-dow);
   const wk=['M','T','W','T','F','S','S'].map((l,k)=>{const d=new Date(mon);d.setDate(mon.getDate()+k);const on=days.has(dkey(d));return `<span><i class="${on?'on':''}${k===dow?' today':''}"></i>${l}</span>`}).join('');
+  if(S.tab==='me')return `<button class="streak mini${safe?' safe':''}" data-action="${safe?'to-campus':'to-drop'}"><span class="streak-fire">🔥</span><span class="t"><b>${n}-day streak</b><span class="sw-mini">${['M','T','W','T','F','S','S'].map((l,k)=>{const d=new Date(mon);d.setDate(mon.getDate()+k);return `<i class="${days.has(dkey(d))?'on':''}${k===dow?' today':''}"></i>`}).join('')}</span></span>${safe?'<small class="ok">safe today</small>':`<span class="streak-cd" id="streak-cd">${untilMidnight()}</span>`}</button>`;
   return `<div class="streak${safe?' safe':''}"><div class="streak-top"><span class="streak-fire">🔥</span><span class="t"><b>${n}-day streak</b><small>${safe?'Safe for today. Come back tomorrow.':'Keep it alive: drop a pic, RSVP or play Hype.'}</small></span>${safe?'':`<span class="streak-cd" id="streak-cd">${untilMidnight()}</span>`}</div><div class="streak-week">${wk}</div>${safe?'':`<div class="streak-acts"><button data-action="to-drop">Drop</button><button data-action="to-campus">RSVP</button><button data-action="hype">Hype</button></div>`}</div>`}
 function renderMe(){stopMe();
   const me=S.me,link=`collegers.app/c/${slug(me.n.split(' ')[0])}-${me.c}`;
