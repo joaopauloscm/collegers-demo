@@ -220,6 +220,9 @@ input#code{font-family:var(--font-display);font-weight:800;font-size:40px;letter
 .streak.mini.safe .sw-mini i{background:var(--night-3)}.streak.mini.safe .sw-mini i.on{background:#FF3D7F}
 .streak.mini .streak-cd{font-size:13px;padding:5px 8px}.streak.mini small.ok{font-size:12px;color:var(--fg-3)}
 .recapbtn.mvbtn{background:#C6FF00;color:#111;margin-bottom:-4px}.recapbtn.mvbtn small{color:rgba(0,0,0,.65)}.recapbtn.mvbtn .chev{color:#111}
+.sch-badge{display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 4px;margin-bottom:8px;border-radius:999px;background:var(--col);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.sch-badge .crest.sm{width:26px;height:26px;border-radius:50%;clip-path:none;background:#fff;overflow:hidden}.sch-badge .crest.sm img{width:80%;height:80%;object-fit:contain}
+.sch-badge b{font:800 14px var(--font-ui);letter-spacing:.01em}.sch-badge em{font:700 10.5px var(--font-ui);font-style:normal;text-transform:uppercase;letter-spacing:.05em;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 7px}
 /* side controls, desktop only */
 .side-ctl{position:fixed;left:24px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:8px;width:190px}
 .side-ctl p{margin:0 0 2px;font:700 11px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:#888}
@@ -2654,7 +2657,7 @@ function renderChat(){
 function profileCard(p,i,opts){const c=C(p.c),cc=mono()?` style="color:${c.col}"`:'';
     return `<article class="rq one${opts.low?' low':''}" data-pid="${p.id}">
       <div class="car-wrap"><span class="stamp yes">add</span><span class="stamp no">skip</span><div class="dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div><div class="car" data-car>${photo(p,1+i,c.name)}${photo(p,2+i,'Night out')}${photo(p,3+i,(p.s&&p.s[0])||'Campus')}</div>
-        <div class="over"><h3>${esc(p.n.split(' ')[0])}</h3><p>${esc(p.m)} · ${esc(p.y)} · <span class="campus"${cc}>${esc(c.name)}</span>${p.mu?` · ${p.mu} mutual`:''}</p></div></div>
+        <div class="over"><span class="sch-badge" style="--col:${c.col}">${crest(c.id,'sm')}<b>${esc(c.name)}</b>${S.me&&p.c===S.me.c?'<em>your school</em>':''}</span><h3>${esc(p.n.split(' ')[0])}</h3><p>${[p.m,p.y].filter(Boolean).map(esc).join(' · ')}${p.mu?` · ${p.mu} mutual`:''}</p></div></div>
       <div class="rq-body">
         ${opts.msg?`<p class="say">“${esc(opts.msg)}”</p>`:''}
         ${opts.low?`<p class="bio">Low-key profile. Reach out and we\'ll ask if it\'s ok.</p>`:p.b?`<p class="bio">${esc(p.b)}</p>`:''}
@@ -3014,7 +3017,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v135</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v136</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
