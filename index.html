@@ -796,6 +796,20 @@ button.rowp{width:100%;font:inherit;color:inherit;background:none;border:0;borde
 .clsp{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:0}
 .clsp b{font-size:14px}.clsp small{font-size:11px;color:var(--fg-3);text-align:center}
 .gtrust{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 10px}.gtrust span{font:700 11px var(--font-ui);padding:4px 9px;border-radius:999px;background:rgba(198,255,0,.16);color:var(--fg);border:1px solid rgba(198,255,0,.45)}
+/* deals + housing */
+.dldot{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border:0;background:none;padding:0;cursor:pointer;display:grid;place-items:center}
+.map-wrap:not(.lit) .dldot{opacity:0}
+.dldot i{width:20px;height:20px;border-radius:50%;background:#FFB648;display:grid;place-items:center;box-shadow:0 0 0 2px rgba(255,255,255,.9),0 3px 8px rgba(0,0,0,.3)}
+.dldot i svg{width:12px;height:12px;fill:none;stroke:#111;stroke-width:2.2;stroke-linejoin:round}
+.dldot.on i{background:#C6FF00}
+.dldot span{position:absolute;left:22px;top:50%;transform:translateY(-50%);font:700 10.5px var(--font-ui);color:var(--fg);white-space:nowrap;text-shadow:0 0 4px var(--night),0 0 8px var(--night)}
+.map-wrap:not([data-z="near"]) .dldot span{opacity:0}
+.deal-off{margin:0;font:900 26px/1.1 var(--font-display);color:var(--fg)}
+.hs-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:#fff;font:inherit;cursor:pointer}
+.hs-p{flex:none;display:flex;flex-direction:column;align-items:flex-start;min-width:58px}.hs-p b{font:900 17px var(--font-display);color:#C6FF00}.hs-p small{font-size:10.5px;opacity:.6}
+.hs-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.hs-t b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hs-t small{font-size:11.5px;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs-row .av{width:30px;height:30px;font-size:11px;flex:none}
+.hs-list{display:flex;flex-direction:column;gap:8px}.hs-list .hs-row{background:var(--night-2);border-color:var(--line);color:var(--fg)}.hs-list .hs-p b{color:var(--fg)}
 /* spots */
 .fc.spots .clubs-in{gap:12px}
 .sp-list{display:flex;flex-direction:column;gap:8px}
@@ -2086,7 +2100,7 @@ let viewAnim=null;
 function animateView(to,dur){cancelAnimationFrame(viewAnim);const from={...VIEW},t0=performance.now();dur=dur||420;
   const step=now=>{const t=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-t,3);VIEW.lon=from.lon+(to.lon-from.lon)*e;VIEW.lat=from.lat+(to.lat-from.lat)*e;VIEW.z=from.z+((to.z==null?from.z:to.z)-from.z)*e;clampView();repaint();if(t<1)viewAnim=requestAnimationFrame(step)};viewAnim=requestAnimationFrame(step)}
 function zoomAtAnimated(f,px,py){const from={...VIEW};zoomAt(f,px,py);const to={...VIEW};VIEW.lon=from.lon;VIEW.lat=from.lat;VIEW.z=from.z;animateView(to,300)}
-function repaint(){if(!mapW)return;drawMap(1);placeEvents();placeSpots();syncZoomClass()}
+function repaint(){if(!mapW)return;drawMap(1);placeEvents();placeSpots();placeDeals();syncZoomClass()}
 function syncZoomClass(){const w=$('#map-wrap');if(w)w.dataset.z=VIEW.z<1.3?'far':VIEW.z>=2.3?'near':'mid'}
 const LOGO={};CAMPI.forEach(c=>{if(!c.logo)return;const im=new Image();im.onload=()=>{if(S.stage==='app'&&S.tab==='map'&&mapSeen)repaint()};im.src=c.logo;LOGO[c.id]=im});
 function sizeMap(){const cv=$('#map'),w=$('#map-wrap').clientWidth;if(!w)return false;mapW=w;const wh=$('#map-wrap').clientHeight;mapH=$('.screen[data-screen="map"]').classList.contains('active')&&wh>200?wh:Math.round(w*1.34);dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(w*dpr);cv.height=Math.round(mapH*dpr);cv.style.height=mapH+'px';mapK=Math.round(w*1.34);mapCenter();placeEvents();return true}
@@ -2601,10 +2615,13 @@ function feedItems(){const c=C(S.me.c),mine=new Set(myIds()),f=S.feedF||'all',ou
   out.splice(Math.min(1,out.length),0,{k:'ranked'});
   out.splice(Math.min(4,out.length),0,{k:'clubs'});out.push({k:'results'});
   if(spOpen().length)out.splice(Math.min(2,out.length),0,{k:'spots'});
+  out.splice(Math.min(5,out.length),0,{k:'deals'});out.splice(Math.min(7,out.length),0,{k:'housing'});
   const mt=MATCHES.find(m=>m.home===c.id||m.away===c.id);if(mt)out.push({k:'game',mt});
   out.push({k:'board'});
-  return out.filter(x=>f==='all'||x.k===f||(f==='party'&&x.k==='pub'&&x.x.kind==='festa')||(f==='game'&&x.k==='pub'&&x.x.kind==='esporte')||(f==='ranked'&&x.k==='results')||(f==='board'&&x.k==='spots')).map(x=>({...x,friends:x.ev?x.ev.who.filter(id=>mine.has(id)).length:0}))}
+  return out.filter(x=>f==='all'||x.k===f||(f==='party'&&x.k==='pub'&&x.x.kind==='festa')||(f==='game'&&x.k==='pub'&&x.x.kind==='esporte')||(f==='ranked'&&x.k==='results')||(f==='board'&&(x.k==='spots'||x.k==='housing'||x.k==='deals'))).map(x=>({...x,friends:x.ev?x.ev.who.filter(id=>mine.has(id)).length:0}))}
 function feedCard(x,i){
+  if(x.k==='deals'){const ds=dealsNear().slice(0,4),c=C(S.me.c);return `<section class="fc spots" data-i="${i}"><img class="fc-bg" src="photos/party-bar.jpg" alt="" onerror="this.remove()"><div class="fc-shade" style="background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.78) 36%,rgba(0,0,0,.94) 100%)"></div><div class="clubs-in"><span class="fc-tag lime">student deals</span><h3 class="fc-t">deals</h3><p class="fc-where">Near ${esc(c.short)}. Show your profile at the counter.</p><div class="sp-list">${ds.map(x=>`<button class="sp-row" data-action="deal" data-id="${x.id}"><span class="sp-ic">${dIc}</span><span class="sp-t"><b>${esc(x.n)}</b><small>${esc(x.off)}</small></span><span class="sp-n">${Math.max(1,Math.round(dist(x,c)*10))/10} mi</span></button>`).join('')}</div></div></section>`}
+  if(x.k==='housing')return `<section class="fc spots" data-i="${i}"><img class="fc-bg" src="photos/scene-lawn.jpg" alt="" onerror="this.remove()"><div class="fc-shade" style="background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.78) 36%,rgba(0,0,0,.94) 100%)"></div><div class="clubs-in"><span class="fc-tag lime">verified students only</span><h3 class="fc-t">rooms</h3><p class="fc-where">Sublets and roommates, posted by students with a school email.</p><div class="sp-list">${HOUSE.slice(0,3).map(houseRow).join('')}</div><div class="fc-acts"><button class="fc-go" data-action="house-all">See all</button><button class="fc-more" data-action="soon">+ list a room</button></div></div></section>`;
   if(x.k==='spots'){const sp=spOpen().slice(0,4);return `<section class="fc spots" data-i="${i}"><img class="fc-bg" src="photos/sport-soccer.jpg" alt="" onerror="this.remove()"><div class="fc-shade" style="background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.75) 36%,rgba(0,0,0,.93) 100%)"></div><div class="clubs-in"><span class="fc-tag lime">spots · open now</span><h3 class="fc-t">spots</h3><p class="fc-where">Small plans with open seats. Pickup, food, rides, a spare ticket.</p><div class="sp-list">${sp.map(spRow).join('')}</div><div class="fc-acts"><button class="fc-go" data-action="spot-new">Post a spot</button></div></div></section>`}
   if(x.k==='pub'){const p=x.x,n=pubN(p),on=going(p.id);return `<section class="fc" data-i="${i}"><img class="fc-bg" src="${p.cover}" alt="" onerror="this.remove()"><div class="fc-shade"></div><div class="fc-bot"><span class="fc-tag dark">from ${esc(p.src)}</span><h3 class="fc-t">${esc(p.t)}</h3><p class="fc-where">${esc(wl(p.w))} · ${esc(p.where)}</p><span class="fc-cd" data-at="${nextDate(p).getTime()}"><i></i>starts in <b>${cdText(p)}</b></span><div class="fc-row"><em>${goLine(n,on,'from Collegers going')}</em></div><div class="fc-acts"><button class="fc-go${on?' on':''}" data-action="pub-go" data-id="${p.id}">${on?'You\'re in ✓':'I\'m in'}</button><button class="fc-more" data-action="pub" data-id="${p.id}">Details</button></div></div></section>`}
   if(x.k==='clubs'){const me=C(S.me.c);return `<section class="fc clubs" data-i="${i}"><img class="fc-bg" src="photos/scene-grads.jpg" alt="" onerror="this.remove()"><div class="fc-shade" style="background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,.72) 38%,rgba(0,0,0,.92) 100%)"></div><div class="clubs-in"><span class="fc-tag lime">${CLUBS.length} clubs at ${esc(me.short)}</span><h3 class="fc-t">clubs</h3><p class="fc-where">Follow one and its events land in your week. Run one? Claim it.</p><div class="club-grid">${CLUBS.slice(0,6).map(k=>{const fo=(S.follows||[]).includes(k.id);return `<button class="club${fo?' on':''}" data-action="club" data-id="${k.id}"><i class="kl" style="--h:${hsh(k.n)%360}">${esc(k.n.split(' ').map(w=>w[0]).join('').slice(0,2))}</i><b>${esc(k.n)}</b><small>${clubF(k)} following${k.cl||(S.claimed||[]).includes(k.id)?'':' · unclaimed'}</small></button>`}).join('')}</div></div></section>`}
@@ -2902,6 +2919,39 @@ function renderJoin(){const b=$('#join-body');if(!b)return;const st=S.jn||0,d=S.
 function joinDone(){const d=S.jd||{},c=C(d.c||'np'),n=(d.n||'').trim()||'You';
   S.me={n,c:c.id,m:d.m||'',y:d.y||'',p:'aberto',s:[],img:d.img||null};S.email=`${slug(n.split(' ')[0])}@${c.domain}`;S.gal=d.img?[d.img]:[];S.onb=1;S.jd=null;S.jn=0;
   if(!S.tutDone){S.stage='tutorial';S.tut=0}else{S.stage='app';S.tab='map'}save();render();toast(`Welcome to ${c.short}.`)}
+/* ---------- Deals (student discounts near campus) + Housing (sublets, roommates) ---------- */
+const DEAL_IC='<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.4"/>';
+const DEALS=[
+  {id:'d1',n:'Corner Slice',k:'Food',off:'2 slices + a drink, $6',lon:-87.7125,lat:41.9765},
+  {id:'d2',n:'Sheridan Coffee Co.',k:'Coffee',off:'20% off before 10am',lon:-87.6595,lat:41.9985},
+  {id:'d3',n:'Lincoln Ave Barbers',k:'Haircut',off:'$15 cut, Monday to Thursday',lon:-87.6525,lat:41.9235},
+  {id:'d4',n:'Halsted Night Tacos',k:'Late night',off:'15% off after 10pm',lon:-87.6475,lat:41.8735},
+  {id:'d5',n:'Lakeview Climbing',k:'Gym',off:'Student day pass, $12',lon:-87.6555,lat:41.9395},
+  {id:'d6',n:'Clark St. Books',k:'Books',off:'10% off, used textbooks too',lon:-87.6685,lat:41.9785}];
+const DL=id=>DEALS.find(x=>x.id===id);
+const dealsNear=()=>{const c=C(S.me.c);return [...DEALS].sort((a,b)=>dist(a,c)-dist(b,c))};
+const dIc=`<svg viewBox="0 0 24 24">${DEAL_IC}</svg>`;
+function placeDeals(){const w=$('#map-wrap');if(!mapW||!w)return;w.querySelectorAll('.dldot').forEach(n=>n.remove());if(VIEW.z<1.5)return;
+  const busy=CAMPI.map(c=>{const [cx,cy]=proj(c.lon,c.lat);return {x:cx,y:cy,r:badgeSize(count(c.id),VIEW.z)/2+14}});
+  DEALS.forEach(x=>{let [px,py]=proj(x.lon,x.lat);if(px<-20||px>mapW+20||py<-20||py>mapH+20)return;busy.forEach(b=>{if(Math.hypot(px-b.x,py-b.y)<b.r){px=b.x+b.r*0.5;py=b.y+b.r}});
+    const b=document.createElement('button');b.className='dldot'+((S.dealSaved||[]).includes(x.id)?' on':'');b.dataset.action='deal';b.dataset.id=x.id;b.setAttribute('aria-label',x.n);b.innerHTML=`<i>${dIc}</i><span>${esc(x.off.split(',')[0])}</span>`;b.style.left=px+'px';b.style.top=py+'px';w.appendChild(b)})}
+function dealSheet(x){const c=C(S.me.c),d=Math.max(1,Math.round(dist(x,c)*10))/10,sv=(S.dealSaved||[]).includes(x.id);
+  return `<div class="row" style="gap:6px"><span class="pill ok">Student deal</span><span class="pill">${esc(x.k)}</span></div><h3>${esc(x.n)}</h3><p class="deal-off">${esc(x.off)}</p><p class="sub" style="margin:0">${d} mi from ${esc(c.short)}</p>
+  <div class="group"><div class="srow"><span>How it works<small>Show your Collegers profile at the counter. Verified students only.</small></span></div></div>
+  <p class="fine">Sample deal for the prototype. Real deals come from local places that sign up.</p>
+  <div class="actions"><button class="btn ${sv?'on':'primary'}" data-action="deal-save" data-id="${x.id}">${sv?'Saved':'Save'}</button><button class="btn ghost" data-action="deal-map" data-id="${x.id}">Show on map</button></div>`}
+const HOUSE=[
+  {id:'h1',k:'sublet',t:'Room in a 3BR, Rogers Park',price:850,dates:'Jan to May',where:'6 min walk to Loyola',by:'p28',d:'Furnished room, two roommates (both Loyola). Laundry in the building, Red Line close.'},
+  {id:'h2',k:'roommate',t:'Need a roommate, Lincoln Park 2BR',price:1050,dates:'from Aug',where:'10 min to DePaul',by:'p14',d:'Quiet weeknights, normal weekends. Lease is signed, looking for one more.'},
+  {id:'h3',k:'sublet',t:'Summer sublet, West Loop studio',price:1400,dates:'May to Aug',where:'Blue Line, 12 min to UIC',by:'p7',d:'Whole studio while I intern in NYC. Furniture stays.'},
+  {id:'h4',k:'sublet',t:'Room near North Park, Albany Park',price:700,dates:'Spring semester',where:'8 min walk to North Park',by:'p5',d:'Room in a 2BR with a grad student. Utilities included.'}];
+const HS=id=>HOUSE.find(x=>x.id===id);
+function houseRow(x){const h=P(x.by);return `<button class="hs-row" data-action="house" data-id="${x.id}"><span class="hs-p"><b>$${x.price.toLocaleString()}</b><small>/mo</small></span><span class="hs-t"><b>${esc(x.t)}</b><small>${esc(x.dates)} · ${esc(x.where)}</small></span>${h?avatar(h):''}</button>`}
+function houseSheet(x){const h=P(x.by),asked=(S.houseAsk||[]).includes(x.id);
+  return `<div class="row" style="gap:6px"><span class="pill ok">${x.k==='roommate'?'Roommate wanted':'Sublet'}</span><span class="pill">${esc(x.dates)}</span></div><h3>${esc(x.t)}</h3><p class="deal-off">$${x.price.toLocaleString()}<small style="font-size:14px;font-weight:600"> /month</small></p><p class="sub" style="margin:0">${esc(x.where)}</p>
+  ${h?`<div class="row">${avatar(h)}<div><strong style="font-weight:600">${esc(h.n)}</strong><span class="meta" style="display:block">verified · ${esc(C(h.c).name)}</span></div></div>`:''}<p class="bio">${esc(x.d)}</p>
+  <div class="group"><div class="srow"><span>Stay safe<small>See the place before you pay anything. Never wire money or pay a deposit to hold it. Collegers never handles rent.</small></span></div></div>
+  <div class="actions"><button class="btn ${asked?'on':'primary'}" data-action="house-ask" data-id="${x.id}"${asked?' disabled':''}>${asked?'Asked':'Ask about it'}</button><button class="btn ghost" data-action="close">Close</button></div>`}
 /* ---------- Ranked: this or that, your tier lists ---------- */
 const RK={
   food:{n:'Late-night food',e:'🌭',items:[["Portillo's",'🌭'],["Lou Malnati's",'🍕'],["Jim's Original",'🌭'],["Al's Italian Beef",'🥪'],["Giordano's",'🍕'],["Harold's Chicken",'🍗'],['Garrett Popcorn','🍿'],['Dining hall at 1am','🍽️']]},
@@ -3017,7 +3067,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v136</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v137</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3136,6 +3186,9 @@ function renderSheet(){
   if(t.type==='spot'){const x=SPT(t.id);if(x)h+=spotSheet(x)}
   if(t.type==='spot-new')h+=spotNewSheet();
   if(t.type==='hostpick')h+=`<h3>What are you putting together?</h3><div class="hp"><button class="hp-o" data-action="new-party"><b>A party</b><small>Guest list, wristband, address after RSVP</small></button><button class="hp-o" data-action="spot-new"><b>A spot</b><small>Need 2 for pickup, a food run, a ride, a spare ticket</small></button></div><div class="actions"><button class="btn ghost" data-action="close">Close</button></div>`;
+  if(t.type==='deal'){const x=DL(t.id);if(x)h+=dealSheet(x)}
+  if(t.type==='house'){const x=HS(t.id);if(x)h+=houseSheet(x)}
+  if(t.type==='house-all')h+=`<h3>Rooms</h3><p class="sub" style="margin:0">Sublets and roommates from verified students.</p><div class="hs-list">${HOUSE.map(houseRow).join('')}</div><p class="fine">See the place before paying anything. Collegers never handles rent.</p><div class="actions"><button class="btn primary" data-action="soon">List a room</button><button class="btn ghost" data-action="close">Close</button></div>`;
   if(t.type==='board'){h+=`<span class="pill ok" style="align-self:flex-start">${FLYERS.length} flyers</span><h3>The board</h3><p class="sub" style="margin:0">Rides, goalies, study groups, stuff for sale. Your school only.</p><div class="mural">${boardFlyers()}</div><div class="actions"><button class="btn primary" data-action="soon">Pin a flyer</button><button class="btn ghost" data-action="close">Close</button></div>`}
   sh.innerHTML=h;ov.hidden=false;
 }
@@ -3311,6 +3364,12 @@ function init(){
     if(a==='join-year'){S.jd.y=el.dataset.text;renderJoin();return}
     if(a==='join-photo'){const inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.onchange=()=>{const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),k=Math.min(1,720/Math.max(im.width,im.height));c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.jd.img=c.toDataURL('image/jpeg',.8);renderJoin()};im.src=r.result};r.readAsDataURL(f)};inp.click();return}
     if(a==='join-done'){joinDone();return}
+    if(a==='deal'){S.sheet={type:'deal',id};render();return}
+    if(a==='deal-save'){const f=S.dealSaved||[];S.dealSaved=f.includes(id)?f.filter(v=>v!==id):[...f,id];save();renderSheet();if(!f.includes(id))toast('Saved. It shows on your map.');return}
+    if(a==='deal-map'){const x=DL(id);S.sheet=null;S.tab='map';render();setTimeout(()=>{VIEW.lon=x.lon;VIEW.lat=x.lat;VIEW.z=Math.max(VIEW.z,2.4);clampView();repaint()},80);return}
+    if(a==='house'){S.sheet={type:'house',id};render();return}
+    if(a==='house-all'){S.sheet={type:'house-all'};render();return}
+    if(a==='house-ask'){S.houseAsk=[...new Set([...(S.houseAsk||[]),id])];save();renderSheet();const h=P(HS(id).by);toast(`Sent. ${h?esc(h.n.split(' ')[0])+' sees':'They see'} you're a verified ${esc(C(S.me.c).short)} student.`);return}
     if(a==='me-tab'){S.meTab=id;renderMe();save();return}
     if(a==='to-meet'){S.tab='requests';S.sheet=null;render();return}
     if(a==='proto-reset'){if(el.dataset.armed){try{localStorage.removeItem(KEY)}catch(e){}location.reload();return}el.dataset.armed='1';const t=el.textContent;el.textContent='Tap again to start over';setTimeout(()=>{delete el.dataset.armed;el.textContent=t},3000);return}
