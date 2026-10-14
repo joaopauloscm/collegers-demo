@@ -184,6 +184,26 @@ input#code{font-family:var(--font-display);font-weight:800;font-size:40px;letter
 .tab .dot{position:absolute;top:8px;left:calc(50% + 8px);width:8px;height:8px;border-radius:50%;background:var(--cup);box-shadow:0 0 8px var(--cup)}
 
 .toast{position:absolute;left:20px;right:20px;bottom:88px;background:var(--fg);color:#1B1024;padding:12px 14px;border-radius:14px;font-weight:500;font-size:14px;z-index:6;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+/* welcome: photo wall */
+.welcome{position:relative;overflow:hidden;background:#0d0d0f}
+.wl-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 6px;transform:rotate(-6deg) scale(1.25);opacity:.9}
+.wl-col{overflow:hidden}.wl-track{display:flex;flex-direction:column;gap:6px;animation:wlUp 46s linear infinite}
+.wl-col.c1 .wl-track{animation-name:wlDown;animation-duration:54s}.wl-col.c2 .wl-track{animation-duration:40s}
+.wl-track img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:14px;display:block}
+@keyframes wlUp{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes wlDown{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+.wl-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.15) 30%,rgba(0,0,0,.35) 55%,rgba(0,0,0,.92) 82%)}
+.welcome .wl-hero{position:relative;z-index:2}
+.welcome .wl-hero .wordmark{color:#fff !important;text-shadow:0 4px 24px rgba(0,0,0,.45)}
+.wl-tag{margin:6px 0 0;font:800 22px/1.05 var(--font-display);color:#fff;letter-spacing:.01em;text-transform:lowercase}
+.wl-bot{position:relative;z-index:2;margin-top:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:10px}
+.wl-live{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wl-out{white-space:nowrap;display:inline-flex;align-items:center;gap:7px;font:700 13px var(--font-ui);color:#fff;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.22)}
+.wl-out i{width:8px;height:8px;border-radius:50%;background:#C6FF00;box-shadow:0 0 10px #C6FF00;animation:pulse 1.6s infinite}
+.wl-sch{display:inline-flex;align-items:center;gap:4px}.wl-sch .crest.sm{width:30px;height:33px}.wl-sch small{white-space:nowrap;font:700 12px var(--font-ui);color:rgba(255,255,255,.8);margin-left:4px}
+.btn.wl-go{width:100%;font-size:17px;padding:16px;background:#fff;color:#111;border:0;font-weight:800}
+.wl-fine{margin:0;font-size:12px;color:rgba(255,255,255,.6);text-align:center}
+@media (prefers-reduced-motion:reduce){.wl-track{animation:none}}
 /* welcome: skyline + glass card */
 .welcome{gap:0}
 .sky-wrap{position:relative;flex:1 1 auto;min-height:150px;margin-inline:-20px;margin-top:-8px}
@@ -1606,11 +1626,13 @@ button.hrow{width:100%;font:inherit;color:inherit;background:none;border:0;text-
 <div class="phone" id="phone">
 
   <section class="screen welcome" data-screen="welcome">
-    <div class="hero"><div class="glow"></div><h1 class="wordmark">COLLEGERS</h1></div>
-    <div class="sky-wrap" id="sky-wrap"><canvas id="sky" aria-hidden="true"></canvas></div>
-    <div class="glass form">
-      <button class="btn primary" type="button" data-action="enter">Enter</button>
-      <p class="fine">Clickable prototype. You enter with a sample profile; change everything in Profile. People, events and numbers are examples.</p>
+    <div class="wl-bg" id="wl-bg" aria-hidden="true"></div><div class="wl-shade" aria-hidden="true"></div>
+    <div class="hero wl-hero"><h1 class="wordmark">COLLEGERS</h1><p class="wl-tag">every school.<br>one map.</p></div>
+    <div class="sky-wrap" id="sky-wrap" hidden><canvas id="sky" aria-hidden="true"></canvas></div>
+    <div class="wl-bot">
+      <div class="wl-live" id="wl-live"></div>
+      <button class="btn wl-go" type="button" data-action="enter">Enter</button>
+      <p class="wl-fine">Clickable prototype. Sample profile, people and numbers.</p>
     </div>
   </section>
 
@@ -2928,7 +2950,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v129</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v130</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3294,7 +3316,12 @@ function init(){
   new ResizeObserver(()=>{if(S.stage==='app'&&S.tab==='map'&&mapSeen){sizeMap()&&repaint()}}).observe($('#map-wrap'));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.sheet){S.sheet=null;render()}});
 }
-function boot(data){const saved=(data&&data.S)||load();if(saved&&typeof saved==='object'){S={...fresh(),...saved,sheet:null,sel:null};if(!saved.defMono){S.theme='mono';S.defMono=true}}if(S.me){if(!S.me.img||/randomuser/.test(S.me.img))S.me.img='photos/m06.jpg';S.me.img2='photos/scene-lawn.jpg';S.me.img3='photos/party-cups.jpg';S.me.img4='photos/party-crowd.jpg'}(S.evs||[]).forEach(e=>{if(!EVENTS.some(x=>x.id===e.id))EVENTS.push(e)});if(!Array.isArray(S.going))S.going=[];if(!Array.isArray(S.out))S.out=[];if(!Array.isArray(S.inc))S.inc=[];if(!Array.isArray(S.conn))S.conn=[];if(!Array.isArray(S.unlocked))S.unlocked=[S.theme||'festa'];if(S.simEmpty)applySim();init();render()}
+/* ---------- welcome: moving photo wall, schools, live count ---------- */
+function fillWelcome(){const bg=$('#wl-bg'),lv=$('#wl-live');if(!bg||bg.dataset.on)return;bg.dataset.on=1;
+  const cols=[['party-crowd','f14','sport-soccer','m05','party-concert','a11'],['f12','scene-lawn','m02','party-girls','a05','f05'],['sport-bball','f09','party-cups','m08','scene-grads','f03']];
+  bg.innerHTML=cols.map((c,i)=>`<div class="wl-col c${i}"><div class="wl-track">${[...c,...c].map(x=>`<img src="photos/${x}.jpg" alt="" loading="eager" onerror="this.remove()">`).join('')}</div></div>`).join('');
+  if(lv)lv.innerHTML=`<span class="wl-out"><i></i>${outTonight()||26} out tonight</span><span class="wl-sch">${LAUNCH.map(id=>crest(id,'sm')).join('')}<small>+${CAMPI.length-LAUNCH.length} soon</small></span>`}
+function boot(data){const saved=(data&&data.S)||load();if(saved&&typeof saved==='object'){S={...fresh(),...saved,sheet:null,sel:null};if(!saved.defMono){S.theme='mono';S.defMono=true}}if(S.me){if(!S.me.img||/randomuser/.test(S.me.img))S.me.img='photos/m06.jpg';S.me.img2='photos/scene-lawn.jpg';S.me.img3='photos/party-cups.jpg';S.me.img4='photos/party-crowd.jpg'}(S.evs||[]).forEach(e=>{if(!EVENTS.some(x=>x.id===e.id))EVENTS.push(e)});if(!Array.isArray(S.going))S.going=[];if(!Array.isArray(S.out))S.out=[];if(!Array.isArray(S.inc))S.inc=[];if(!Array.isArray(S.conn))S.conn=[];if(!Array.isArray(S.unlocked))S.unlocked=[S.theme||'festa'];if(S.simEmpty)applySim();init();render();fillWelcome()}
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 </script>
