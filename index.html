@@ -2675,7 +2675,7 @@ function meCard(viewerSame){
   const me=S.me;
   if(me.p==='faculdade'&&!viewerSame)return `<div class="ghostcard">You don\'t show up for people from other schools.</div>`;
   const d=me.p==='discreto',sp=sportsText(me);
-  return `<div class="card static">${avatar(me)}<span class="info"><strong>${esc(me.n)}</strong><span class="meta">${esc(me.m)} · ${esc(me.y)}</span><span class="meta2">${esc(C(me.c).name)}${d?' · low-key':''}${sp&&!d?' · '+esc(sp):''}</span></span></div>`;
+  return `<div class="card static">${avatar(me)}<span class="info"><strong>${esc(me.n)}</strong><span class="meta">${[me.m,me.y].filter(Boolean).map(esc).join(' · ')||esc(C(me.c).short)}</span><span class="meta2">${esc(C(me.c).name)}${d?' · low-key':''}${sp&&!d?' · '+esc(sp):''}</span></span></div>`;
 }
 const PH_HUES=[290,330,18,262]; // plum, magenta, bulb orange, purple — always warm
 function photo(me,n,where,hero){
@@ -2857,16 +2857,16 @@ function classRow(){if(!bigMe())return'';const mine=new Set(myIds()),skip=new Se
   return `<section class="fr-sec"><h3>Same class? <span style="font:500 13px var(--font-ui);color:var(--fg-3)">${esc(C(S.me.c).short)}</span></h3><div class="clsrow">${ps.map(p=>`<div class="clsc"><button class="clsp" data-action="person" data-id="${p.id}">${avatar(p,true)}<b>${esc(p.n.split(' ')[0])}</b><small>${esc(sharedCls(p)[0])}</small></button>${requested(p.id)?'<span class="sval">added</span>':`<button class="btn sm primary" data-action="intro" data-id="${p.id}">+ add</button>`}</div>`).join('')}</div></section>`}
 /* ---------- join: first experience (name, school, major, photo) ---------- */
 const JMAJ=['Computer Science','Business','Nursing','Psychology','Biology','Engineering','Finance','Communication','Design','Undeclared'];
-function renderJoin(){const b=$('#join-body');if(!b)return;const st=S.jn||0,d=S.jd||(S.jd={}),dots=`<div class="jdots">${[0,1,2,3].map(i=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>`,back=st?`<button class="jback" data-action="join-back" aria-label="Back">‹</button>`:'<span></span>';
+function renderJoin(){const b=$('#join-body');if(!b)return;const st=S.jn||0,d=S.jd||(S.jd={}),dots=`<div class="jdots">${[0,1].map(i=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>`,back=st?`<button class="jback" data-action="join-back" aria-label="Back">‹</button>`:'<span></span>';
   let h='';
   if(st===0)h=`<h2 class="jq">what do people<br>call you?</h2><input id="j-name" class="jin" maxlength="24" placeholder="First name" autocomplete="given-name" value="${esc(d.n||'')}"><p class="jfine">Real first name. It's how your school finds you.</p><button class="btn primary jgo" data-action="join-next"${(d.n||'').trim()?'':' disabled'}>Next</button>`;
-  if(st===1){const order=[...LAUNCH,...CAMPI.map(c=>c.id).filter(id=>!LAUNCH.includes(id))];h=`<h2 class="jq">your school</h2><div class="jsch">${order.map(id=>{const c=C(id);return `<button class="jsc${d.c===id?' on':''}" data-action="join-school" data-id="${id}" style="--col:${c.col}">${crest(id,'sm')}<b>${esc(c.short)}</b>${isSoon(id)?'<small>early access</small>':''}</button>`}).join('')}</div><p class="jfine">You'll confirm with your school email. Nobody sees it.</p><button class="btn primary jgo" data-action="join-next"${d.c?'':' disabled'}>Next</button>`}
+  if(st===1){const order=[...LAUNCH,...CAMPI.map(c=>c.id).filter(id=>!LAUNCH.includes(id))];h=`<h2 class="jq">your school</h2><div class="jsch">${order.map(id=>{const c=C(id);return `<button class="jsc${d.c===id?' on':''}" data-action="join-school" data-id="${id}" style="--col:${c.col}">${crest(id,'sm')}<b>${esc(c.short)}</b>${isSoon(id)?'<small>early access</small>':''}</button>`}).join('')}</div><p class="jfine">You'll confirm with your school email. Nobody sees it.</p><button class="btn primary jgo" data-action="join-done"${d.c?'':' disabled'}>Let's go</button>`}
   if(st===2)h=`<h2 class="jq">what are you<br>studying?</h2><div class="jchips">${JMAJ.map(m=>`<button class="chip${d.m===m?' on':''}" data-action="join-major" data-text="${m}">${m}</button>`).join('')}</div><p class="lbl" style="margin:14px 0 6px">Year</p><div class="jchips">${YEARS.map(y=>`<button class="chip${d.y===y?' on':''}" data-action="join-year" data-text="${y}">${y}</button>`).join('')}</div><button class="btn primary jgo" data-action="join-next"${d.m&&d.y?'':' disabled'}>Next</button>`;
   if(st===3)h=`<h2 class="jq">add a photo</h2><button class="jpic" data-action="join-photo" style="--h:${hue(d.n||'x')}">${d.img?`<img src="${d.img}" alt="">`:`<span class="jini">${esc(initials(d.n||'?'))}</span><small>tap to add</small>`}</button><p class="jfine">Face pics get added back more. You can skip and add one later.</p><button class="btn primary jgo" data-action="join-done">${d.img?'Done':'Skip for now'}</button>`;
   b.innerHTML=`<div class="jtop">${back}${dots}<span></span></div><div class="jstep">${h}</div>`;
   if(st===0){const i=$('#j-name');setTimeout(()=>i&&i.focus(),60)}}
 function joinDone(){const d=S.jd||{},c=C(d.c||'np'),n=(d.n||'').trim()||'You';
-  S.me={n,c:c.id,m:d.m||'Undeclared',y:d.y||'Freshman',p:'aberto',s:[],img:d.img||null};S.email=`${slug(n.split(' ')[0])}@${c.domain}`;S.gal=d.img?[d.img]:[];S.onb=1;S.jd=null;S.jn=0;
+  S.me={n,c:c.id,m:d.m||'',y:d.y||'',p:'aberto',s:[],img:d.img||null};S.email=`${slug(n.split(' ')[0])}@${c.domain}`;S.gal=d.img?[d.img]:[];S.onb=1;S.jd=null;S.jn=0;
   if(!S.tutDone){S.stage='tutorial';S.tut=0}else{S.stage='app';S.tab='map'}save();render();toast(`Welcome to ${c.short}.`)}
 /* ---------- Ranked: this or that, your tier lists ---------- */
 const RK={
@@ -2983,7 +2983,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v131</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v132</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3022,7 +3022,7 @@ function renderMe(){stopMe();
     <div class="me-top"><button class="iconbtn sosi" data-action="sos" aria-label="Safety and SOS"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M12 8v5M12 16h.01"/></svg></button><button class="iconbtn" data-action="settings" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
     <div class="ph hero" style="--h:${PH_HUES[0]}">
       <div class="scene"></div><div class="ini">${initials(me.n)}</div>${IMG(me)}<div class="fade"></div>
-      <span class="sk-badge">🔥 ${streakN()}</span><div class="hero-id"><h3>${esc(me.n)}</h3><p>${esc(me.m)} · ${esc(me.y)} · ${esc(C(me.c).name)}</p><span class="ring ${ringTxt[0]}"><i></i>${ringTxt[1]}</span>${npChip(me)}</div>
+      <span class="sk-badge">🔥 ${streakN()}</span><div class="hero-id"><h3>${esc(me.n)}</h3><p>${[me.m,me.y,C(me.c).name].filter(Boolean).map(esc).join(' · ')}</p><span class="ring ${ringTxt[0]}"><i></i>${ringTxt[1]}</span>${npChip(me)}</div>
     </div>
     ${streakCard()}
     <div class="mestats"><button class="mestat" data-action="hype"><b>${hypeState().inbox.length}</b><small>hyped you</small></button><button class="mestat" data-action="copy" data-text="${link}"><b>${linkN()}</b><small>joined with your link</small></button><button class="mestat" data-action="to-quests"><b>${myXP()}</b><small>xp from moves</small></button></div>${badges.length?`<div class="badges">${badges.map(q=>`<span class="badge">${esc(q.badge)}</span>`).join('')}</div>`:''}
