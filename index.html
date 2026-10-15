@@ -1785,6 +1785,25 @@ button.hrow{width:100%;font:inherit;color:inherit;background:none;border:0;text-
 .thm b{font-weight:600}
 
 @media (prefers-reduced-motion:reduce){.sheet{animation:none}.live i{animation:none}.evdot::before{animation:none;opacity:0}.h-display::after{animation:none}}
+/* ---------- map: people at each school (v148) ---------- */
+.cf-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:2px}
+.cf-h b{font-family:var(--font-display);font-weight:800;font-size:20px;line-height:1}
+.cf-h small{font-size:12px;color:var(--fg-3)}
+.cfaces{display:flex;gap:6px;overflow-x:auto;margin-inline:-20px;padding:0 20px 2px;scroll-snap-type:x mandatory;scroll-padding-inline:20px;scrollbar-width:none;flex-shrink:0}
+.cfaces::-webkit-scrollbar{display:none}
+.cfaces .tw{flex:0 0 31%;scroll-snap-align:start}
+.cfaces .tile{border-radius:14px}
+.cfaces .tile .cap{right:6px !important;left:8px;bottom:8px}
+.cfaces .tile .cap b{font-size:13.5px !important}
+.cfaces .tile .cap small{font-size:10px !important}
+.cfaces .tile .ini{font-size:40px !important}
+.cfaces .tile .mu{transform:scale(.85);transform-origin:top right}
+.cfaces .tile .tstk{transform:scale(.85);transform-origin:top left}
+.cfaces .wave{width:30px;height:30px;font-size:16px;right:6px;bottom:30px}
+.chip.sc .cpile{display:inline-flex}
+.chip.sc .cpile img{width:20px;height:20px;border-radius:50%;object-fit:cover;border:1.5px solid var(--sc);margin-left:-7px;background:var(--night-2)}
+.chip.sc .cpile img:first-child{margin-left:-3px}
+#drag-hint{top:30px;bottom:auto}
 /* ---------- First 20 (v147) ---------- */
 .f20{display:inline-flex;align-items:center;gap:7px;padding:4px 9px;border-radius:999px;border:1.5px solid #E8B64C;background:rgba(20,14,4,.55);color:#F6D27A;font:800 10.5px var(--font-ui);letter-spacing:.09em;text-transform:uppercase;white-space:nowrap}
 .f20 b{font-family:var(--font-display);font-weight:900;font-size:13px;letter-spacing:.02em;color:#fff}
@@ -1895,7 +1914,7 @@ button.hrow{width:100%;font:inherit;color:inherit;background:none;border:0;text-
 
   <section class="screen" data-screen="map">
     <header class="top maptop"><h2 class="h-display">Chicago</h2><button class="sos" data-action="sos" aria-label="Safety and SOS"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M12 8v5M12 16h.01"/></svg>SOS</button><p class="sub" id="map-sub"></p><span class="live" id="out-n" title="People going out tonight"><i></i><b>0</b><span class="ow">&nbsp;out</span></span></header>
-    <div class="map-wrap" id="map-wrap"><canvas id="map" aria-label="Map of Chicago with campuses and events"></canvas><div class="mapctl"><button data-action="zoom-in" aria-label="Zoom in"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button data-action="zoom-out" aria-label="Zoom out"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><button data-action="fit-all" aria-label="All schools"><svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="2.3"/><circle cx="17" cy="7" r="2.3"/><circle cx="7" cy="17" r="2.3"/><circle cx="17" cy="17" r="2.3"/></svg></button><button class="recenter" data-action="recenter" aria-label="Back to my campus"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button></div><span class="drag-hint" id="drag-hint">drag · pinch · double-tap</span></div>
+    <div class="map-wrap" id="map-wrap"><canvas id="map" aria-label="Map of Chicago with campuses and events"></canvas><div class="mapctl"><button data-action="zoom-in" aria-label="Zoom in"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button data-action="zoom-out" aria-label="Zoom out"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><button data-action="fit-all" aria-label="All schools"><svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="2.3"/><circle cx="17" cy="7" r="2.3"/><circle cx="7" cy="17" r="2.3"/><circle cx="17" cy="17" r="2.3"/></svg></button><button class="recenter" data-action="recenter" aria-label="Back to my campus"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button></div><span class="drag-hint" id="drag-hint">tap a school to see who's there</span></div>
     <div class="wk" id="wk"><div class="wk-h" id="wk-h" role="button" tabindex="0" aria-label="Show or hide this week"><i class="wk-grab"></i><span class="wk-row"><b>This week</b><small id="wk-n"></small><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></span></div>
       <div class="wk-body"><div class="strip" id="events"></div><div class="chips" id="campus-chips"></div></div></div>
   </section>
@@ -2624,7 +2643,7 @@ function renderMap(){
   $('#map-sub').textContent=PEOPLE.length>=30?`${PEOPLE.length} students · ${CAMPI.length} schools`:`${CAMPI.length} schools · first 20 spots still open`;
   $('#events').innerHTML=EVENTS.map(eventCard).join('')+PUB.map(pubCard).join('');$('#wk-n').textContent=`${EVENTS.length+PUB.length} events`;wkSet(S.wk||'open',true);
   const sorted=[...CAMPI].sort((a,b)=>count(b.id)-count(a.id));
-  $('#campus-chips').innerHTML=sorted.map(c=>`<button class="chip sc${S.sel===c.id?' on':''}" data-action="pick-campus" data-id="${c.id}" style="--sc:${c.col}"><i></i>${esc(c.name)}${early()&&count(c.id)<10?'':`<b>${count(c.id)}</b>`}</button>`).join('');
+  $('#campus-chips').innerHTML=sorted.map(c=>`<button class="chip sc${S.sel===c.id?' on':''}" data-action="pick-campus" data-id="${c.id}" style="--sc:${c.col}">${facePile(c.id)||'<i></i>'}${esc(c.name)}${early()&&count(c.id)<10?'':`<b>${count(c.id)}</b>`}</button>`).join('');
   requestAnimationFrame(()=>{if(mapSeen){sizeMap()&&repaint()}else showMap()});
 }
 function avatar(p,big){return `<span class="av ${p.p}${big?' big':''}" style="--h:${hue(p.n)}" aria-hidden="true">${initials(p.n)}${IMG(p)}</span>`}
@@ -3072,6 +3091,8 @@ const SIM=()=>!!S.simEmpty;
 const early=()=>SIM(); // prototype: day-one mode = a campus with only a few people (honest floors still apply)
 const pickCap=()=>PICKS;
 const FIRST_N=20;
+const campusFaces=cid=>PEOPLE.filter(p=>p.c===cid&&visible(p)&&p.p!=='discreto');
+const facePile=cid=>{const f=campusFaces(cid).filter(p=>p.img).slice(0,3);return f.length?`<span class="cpile">${f.map(p=>`<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">`).join('')}</span>`:''};
 function myRank(){const me=S.me;if(!me)return 0;if(!me.r||me.rc!==me.c){me.r=count(me.c)+1;me.rc=me.c}return me.r}
 function joinRank(p){if(!p)return 0;if(p===S.me||p.id==='me')return myRank();return PEOPLE.filter(x=>x.c===p.c).indexOf(p)+1}
 const f20Left=cid=>Math.max(0,FIRST_N-count(cid)-(S.me&&S.me.c===cid?1:0));
@@ -3325,7 +3346,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v147</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v148</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3377,9 +3398,9 @@ function renderMe(){stopMe();
 function renderSheet(){
   const ov=$('#overlay'),sh=$('#sheet');if(!S.sheet){ov.hidden=true;sh.innerHTML='';return}
   const t=S.sheet;let h='<div class="grab"></div>';
-  if(t.type==='campus'){const c=C(t.id),ppl=PEOPLE.filter(p=>p.c===c.id),byM={};ppl.forEach(p=>byM[p.m]=(byM[p.m]||0)+1);const top=Object.entries(byM).sort((a,b)=>b[1]-a[1]).slice(0,4);
-    const nearQ=[...POI].map(q=>({q,d:dist(q,c)})).sort((a,b)=>a.d-b.d).slice(0,3),nm=Object.keys(byM).length;
-    h+=`<span class="pill ok" style="align-self:flex-start">open</span><h3>${esc(c.name)}</h3><p class="sub" style="margin:0">${ppl.length?(early()&&ppl.length<10?'A few people in so far.':`${ppl.length} ${ppl.length===1?'person':'people'} · ${nm} ${nm===1?'major':'majors'}`):'Nobody on yet. Whoever joins with your link lands in your friends.'}</p>${f20Line(c.id)}${early()?'':`<div class="row wrap">${top.map(([m,n])=>`<span class="pill">${esc(m)} <b>${n}</b></span>`).join('')}</div>`}<div class="chips" style="margin-top:2px">${nearQ.map(({q,d})=>`<button class="chip sc" data-action="poi-go" data-id="${q.id}" style="--sc:${POIC[q.k]}"><i></i>${esc(q.n)}<b>${Math.max(1,Math.round(d*10))/10} mi</b></button>`).join('')}</div><div class="actions">${ppl.length?`<button class="btn primary" data-action="see-campus" data-id="${c.id}">See who\'s there</button>`:`<button class="btn primary" data-action="copy" data-text="${myLink()}">Share your link</button>`}<button class="btn ghost" data-action="close">Close</button></div>`}
+  if(t.type==='campus'){const c=C(t.id),ppl=PEOPLE.filter(p=>p.c===c.id),byM={};ppl.forEach(p=>byM[p.m]=(byM[p.m]||0)+1);
+    const nearQ=[...POI].map(q=>({q,d:dist(q,c)})).sort((a,b)=>a.d-b.d).slice(0,3),nm=Object.keys(byM).length,mine=new Set(myIds()),faces=campusFaces(c.id),own=c.id===(S.me||{}).c;
+    h+=`<span class="pill ok" style="align-self:flex-start">open</span><h3>${esc(c.name)}</h3><p class="sub" style="margin:0">${ppl.length?(early()&&ppl.length<10?'A few people in so far.':`${ppl.length} ${ppl.length===1?'person':'people'} · ${nm} ${nm===1?'major':'majors'}`):'Nobody on yet. Whoever joins with your link lands in your friends.'}</p>${faces.length?`<div class="cf-h"><b>${own?'At your school':'At '+esc(c.short)}</b><small>${faces.length>3?'swipe · ':''}tap a face for the profile</small></div><div class="cfaces">${faces.map((p,i)=>tile(p,i,false,!mine.has(p.id))).join('')}</div>`:''}${f20Line(c.id)}<div class="chips" style="margin-top:2px">${nearQ.map(({q,d})=>`<button class="chip sc" data-action="poi-go" data-id="${q.id}" style="--sc:${POIC[q.k]}"><i></i>${esc(q.n)}<b>${Math.max(1,Math.round(d*10))/10} mi</b></button>`).join('')}</div><div class="actions">${ppl.length?`<button class="btn primary" data-action="see-campus" data-id="${c.id}">See everyone</button>`:`<button class="btn primary" data-action="copy" data-text="${myLink()}">Share your link</button>`}<button class="btn ghost" data-action="close">Close</button></div>`}
   if(t.type==='event'){const ev=E(t.id),hp=host(ev),n=ev.n+(going(ev.id)?1:0);
     h+=`<span class="pill${ev.kind==='festa'?' hot':' ok'}" style="align-self:flex-start">${ev.kind==='festa'?'Party':'Pickup'}</span><h3>${esc(ev.t)}</h3><p class="sub" style="margin:0">${esc(wl(ev.w))} · ${esc(ev.where)} · ${n} going</p><div class="row">${avatar(hp)}<div><strong style="font-weight:600">${esc(hp.n)}</strong><span class="meta" style="display:block">hosting · ${esc(hp.m)} · ${esc(C(hp.c).name)}</span></div></div><p class="bio">${esc(ev.d)}</p><div class="row"><span class="stack">${ev.who.map(id=>avatar(P(id))).join('')}<span class="more">and ${Math.max(0,n-ev.who.length)} more</span></span></div><p class="fine">${ev.access==='convite'?`Invite only. You got in through ${esc(hp.n.split(' ')[0])}\'s list.`:'Open to any school.'}</p><div class="actions">${ev.kind==='festa'&&going(ev.id)?`<button class="btn primary" data-action="party" data-id="${ev.id}">See the party</button><button class="btn ghost" data-action="close">Close</button>`:`<button class="btn ${going(ev.id)?'on':'primary'}" data-action="go" data-id="${ev.id}">${going(ev.id)?'Going':'I\'m in'}</button><button class="btn ghost" data-action="close">Close</button>`}</div>`}
   if(t.type==='person'){const p=P(t.id),d=p.p==='discreto',r=requested(p.id);
