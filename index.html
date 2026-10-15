@@ -903,7 +903,7 @@ button.rowp{width:100%;font:inherit;color:inherit;background:none;border:0;borde
 .dh-cd b{font:inherit !important;color:inherit}
 #drop-strip .drops .dtile.locked .dimg::after{top:-4px;right:-4px;bottom:auto;width:22px;height:22px}
 .dh-cd i{width:7px;height:7px;border-radius:50%;background:#FF3D7F;box-shadow:0 0 8px #FF3D7F;animation:pulse 1.6s infinite}
-#drop-strip .drops-row{margin:0 !important;padding:2px 16px 2px !important;scroll-padding-inline:16px;gap:12px}
+#drop-strip .drops-row{margin:0 !important;padding:8px 16px 4px !important;scroll-padding-inline:16px;gap:12px}
 #drop-strip .drops .dtile .dimg{width:62px;height:62px;position:relative}
 #drop-strip .drops .dtile.locked .dimg img{filter:blur(5px) brightness(.85)}
 .fst{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);font:800 11px var(--font-ui);font-style:normal;background:#111;color:#fff;border:1.5px solid #FF8A3D;border-radius:999px;padding:1px 6px;white-space:nowrap;z-index:2}
@@ -2609,7 +2609,7 @@ function renderPeople(){
   if(!list.length&&!(browse&&early()&&!q))h+=browse?`<div class="ghostcard">Nobody matches that yet.</div>`:`<div class="ghostcard">Your people show up here once you both add each other. Start with people you already know.</div>`;
   if(!browse){const ids=[...mineSet],evs=EVENTS.filter(ev=>ids.includes(ev.host)||ev.who.some(id=>ids.includes(id)));
     if(!S._oddTile)h+=early()?`<button class="browse-card" data-action="browse-on"><b>Find someone</b><small>search by name ›</small></button>`:`<button class="browse-card" data-action="browse-on"><b>${PEOPLE.filter(visible).length} students · ${new Set(PEOPLE.filter(visible).map(p=>p.c)).size} schools</b><small>${count(S.me.c)} at ${esc(C(S.me.c).short)} · browse everyone ›</small></button>`;S._oddTile=false}
-  $('#people-list').innerHTML=h;{const st=$('#ppl-streak');if(st){const n=streakN(),safe=streakDays().includes(dkey(new Date()));st.innerHTML=browse?'':`<button class="hstreak${safe?' safe':''}" data-action="to-drop">🔥 <b>${n}</b>${safe?'':`<small id="hstreak-cd">${untilMidnight().slice(0,5)} left</small>`}</button>`}}renderDrops();renderHypeStrip();$('#drop-strip').hidden=browse;$('#hype-strip').hidden=browse;
+  $('#people-list').innerHTML=h;{const st=$('#ppl-streak');if(st){const n=streakN(),safe=streakDays().includes(dkey(new Date()));st.innerHTML='';if(0)st.innerHTML=`<button class="hstreak${safe?' safe':''}" data-action="to-drop">🔥 <b>${n}</b>${safe?'':`<small id="hstreak-cd">${untilMidnight().slice(0,5)} left</small>`}</button>`}}renderDrops();renderHypeStrip();$('#drop-strip').hidden=browse;$('#hype-strip').hidden=browse;
   const note=$('#people-note');note.hidden=!hidden;note.textContent=`${hidden} more only visible to their own school`;note.className='disc-note';
 }
 /* ---------- party ---------- */
@@ -3110,7 +3110,6 @@ let rcT=null;function stopRecap(){clearTimeout(rcT);rcT=null}
 function recapSlides(){const top=Object.keys(RK).map(k=>({k,t:myTiers(k)})).find(x=>x.t.S.length),np=npOf(S.me);
   return [{bg:'photos/party-concert.jpg',h:'your week<br>on collegers',t:`${C(S.me.c).short} · week of ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,stk:'recap'},
     {bg:'photos/party-crowd.jpg',big:PAST.length,h:'nights out',t:'Pregames, barbecues, game days.',stk:'nights'},
-    {bg:'photos/sport-soccer.jpg',big:streakN(),h:'day streak',t:'Still alive. Don\'t break it.',stk:'streak 🔥'},
     {bg:'photos/party-girls.jpg',big:hypeState().inbox.length,h:'times hyped',t:'People picked you this week.',stk:'hype'},
     {bg:'photos/scene-lawn.jpg',big:S.conn.length,h:S.conn.length===1?'mutual':'mutuals',t:'Added both ways.',stk:'mutuals'},
     {bg:'photos/sport-bball.jpg',big:myXP(),h:'xp from moves',t:`All of it for ${esc(C(S.me.c).short)}.`,stk:'moves'},
@@ -3153,7 +3152,7 @@ function renderDrops(){const el=$('#drop-strip');if(!el)return;if(S.browse){el.i
   const items=DROP_SAMPLE.filter(x=>mine.has(x.id)||true).slice(0,6),first=!items.length;
   el.innerHTML=`<div class="drops"><div class="drops-h"><span class="dh-l"><b>Today's drop</b><small>${first?(posted?'First at '+esc(C(S.me.c).short)+' today.':'Nobody yet. First one gets the gold ring.'):posted?'Each one opens once.':'Post yours to open theirs.'}</small></span><span class="dh-cd" title="Drops reset at midnight"><i></i><b id="drop-cd">${untilMidnight()}</b></span></div><div class="drops-row">
     <button class="dtile me${posted?' done':''}${posted&&d.first?' first':''}" data-action="${posted?'drop-mine':'drop-post'}"><span class="dimg">${posted?`<img src="${d.mine}" alt="">`:'<i>+</i>'}</span><small>${posted?'Your drop':'Drop yours'}</small></button>
-    ${items.map(x=>{const pp=P(x.id),seen=d.seen.includes(x.id);return `<button class="dtile${seen?' seen':''}${posted?'':' locked'}" data-action="drop-open" data-id="${x.id}"><span class="dimg">${pp.img?`<img src="${pp.img}" alt="" onerror="this.remove()">`:''}${fStreak(x.id)?`<em class="fst">🔥${fStreak(x.id)}</em>`:''}</span><small>${esc(pp.n.split(' ')[0])}</small></button>`}).join('')}
+    ${items.map(x=>{const pp=P(x.id),seen=d.seen.includes(x.id);return `<button class="dtile${seen?' seen':''}${posted?'':' locked'}" data-action="drop-open" data-id="${x.id}"><span class="dimg">${pp.img?`<img src="${pp.img}" alt="" onerror="this.remove()">`:''}</span><small>${esc(pp.n.split(' ')[0])}</small></button>`}).join('')}
   </div></div>`}
 function openDrop(id){const d=dropState(),x=DROP_SAMPLE.find(z=>z.id===id),pp=P(id),v=$('#dropview');
   v.innerHTML=`<div class="dv-bar"><i id="dv-prog"></i></div><div class="dv-head">${avatar(pp)}<span><b>${esc(pp.n.split(' ')[0])}</b><small>${esc(x.w)} · ${esc(C(pp.c).short)}</small></span><button class="dv-x" data-action="drop-close">×</button></div><img class="dv-img" src="photos/${x.img}.jpg" alt=""><p class="dv-cap">${esc(x.t)}</p><p class="dv-once">Opens once. Gone when you close it.</p>`;
@@ -3186,7 +3185,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v143</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v144</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3199,7 +3198,7 @@ function liveTick(){stopLive();const o=$('#out-n b'),w=$('#out-n .ow'),on=$('#ou
 const dkey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 function streakDays(){if(!S.streak){const t=new Date();S.streak=[1,2,3].map(k=>{const d=new Date(t);d.setDate(t.getDate()-k);return dkey(d)})}return S.streak}
 function streakN(){const set=new Set(streakDays()),d=new Date();if(!set.has(dkey(d)))d.setDate(d.getDate()-1);let n=0;while(set.has(dkey(d))){n++;d.setDate(d.getDate()-1)}return n}
-function streakHit(){const t=dkey(new Date()),days=streakDays();if(days.includes(t))return;days.push(t);save();setTimeout(()=>{toast(`🔥 ${streakN()}-day streak!`);if(S.tab==='me')renderMe()},500)}
+function streakHit(){const t=dkey(new Date()),days=streakDays();if(days.includes(t))return;days.push(t);save();setTimeout(()=>{if(S.tab==='me')renderMe()},500)}
 let meT=null;function stopMe(){clearInterval(meT);meT=null}
 function untilMidnight(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);let ms=m-n;const z=x=>String(x).padStart(2,'0');return z(Math.floor(ms/36e5))+':'+z(Math.floor(ms%36e5/6e4))+':'+z(Math.floor(ms%6e4/1e3))}
 function streakCard(){const n=streakN(),days=new Set(streakDays()),safe=days.has(dkey(new Date())),t=new Date(),dow=(t.getDay()+6)%7,mon=new Date(t);mon.setDate(t.getDate()-dow);
@@ -3226,9 +3225,8 @@ function renderMe(){stopMe();
     <div class="me-top"><button class="iconbtn sosi" data-action="sos" aria-label="Safety and SOS"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M12 8v5M12 16h.01"/></svg></button><button class="iconbtn" data-action="settings" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
     <div class="ph hero" style="--h:${PH_HUES[0]}">
       <div class="scene"></div><div class="ini">${initials(me.n)}</div>${IMG(me)}<div class="fade"></div>
-      <span class="sk-badge">🔥 ${streakN()}</span><div class="hero-id"><h3>${esc(me.n)}</h3><p>${[me.m,me.y,C(me.c).name].filter(Boolean).map(esc).join(' · ')}</p><span class="ring ${ringTxt[0]}"><i></i>${ringTxt[1]}</span>${npChip(me)}</div>
+      <div class="hero-id"><h3>${esc(me.n)}</h3><p>${[me.m,me.y,C(me.c).name].filter(Boolean).map(esc).join(' · ')}</p><span class="ring ${ringTxt[0]}"><i></i>${ringTxt[1]}</span>${npChip(me)}</div>
     </div>
-    ${streakCard()}
     <div class="mestats"><button class="mestat" data-action="hype"><b>${hypeState().inbox.length}</b><small>hyped you</small></button><button class="mestat" data-action="copy" data-text="${link}"><b>${linkN()}</b><small>joined with your link</small></button><button class="mestat" data-action="to-quests"><b>${myXP()}</b><small>xp from moves</small></button></div>${badges.length?`<div class="badges">${badges.map(q=>`<span class="badge">${esc(q.badge)}</span>`).join('')}</div>`:''}
     <button class="recapbtn mvbtn" data-action="to-quests"><span class="t"><b>moves</b><small>${esc(qFeatured().t)} · +${qFeatured().xp} xp for ${esc(C(S.me.c).short)}</small></span><span class="chev">›</span></button>
     <button class="recapbtn" data-action="recap"><span class="t"><b>your week, recapped</b><small>${recapSlides().length} slides · ready for your story</small></span><span class="chev" style="color:#fff">›</span></button>
