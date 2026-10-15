@@ -864,6 +864,26 @@ button.rowp{width:100%;font:inherit;color:inherit;background:none;border:0;borde
 .act2 .hfaces{position:absolute;top:10px;left:10px}.act2 .hfaces .av{width:34px;height:34px;font-size:11px;margin-left:-10px;border:2px solid #fff}.act2 .hfaces .av:first-child{margin-left:0}
 .act2 .t{position:absolute;left:10px;right:10px;bottom:10px;display:flex;flex-direction:column;gap:3px;font-size:13px;line-height:1.2}.act2 .t b{font-weight:800}.act2 .t small{font-size:11px;opacity:.75}
 .a2-lock{position:absolute;top:50%;left:50%;transform:translate(-50%,-80%);font:800 11px var(--font-ui);text-transform:uppercase;letter-spacing:.06em;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.35);padding:5px 10px;border-radius:999px;white-space:nowrap}
+/* friends v2: drop band, people row, 3-col discover */
+#drop-strip .drops{background:linear-gradient(135deg,#1b1b1f,#3a2350 70%,#5a2340);color:#fff;border-radius:22px;padding:14px 14px 12px;margin:4px 0 2px}
+#drop-strip .drops-h b{color:#fff;font:900 22px var(--font-display);text-transform:lowercase}#drop-strip .drops-h span{color:rgba(255,255,255,.7)}
+#drop-strip .drops .dtile small{color:rgba(255,255,255,.85)}
+#drop-strip .drops .dtile .dimg{width:66px;height:66px}
+#drop-strip .drops .dtile.me .dimg{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.08)}#drop-strip .drops .dtile.me .dimg i{color:#fff}
+.pp-row{display:flex;gap:10px;overflow-x:auto;margin-inline:-20px;padding:2px 20px 6px;scrollbar-width:none;scroll-snap-type:x mandatory}
+.ppc{position:relative;flex:none;width:128px;height:176px;border-radius:18px;overflow:hidden;border:0;padding:0;cursor:pointer;color:#fff;font:inherit;text-align:left;scroll-snap-align:start;background:linear-gradient(160deg,hsl(var(--h) 45% 40%),#111)}
+.ppc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ppc .ini{position:absolute;inset:0;display:grid;place-items:center;font:900 54px var(--font-display);color:rgba(255,255,255,.3)}
+.ppc::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--col)}
+.ppc .tstk{position:absolute;top:8px;left:8px;z-index:2}
+.pp-cap{position:absolute;left:10px;right:8px;bottom:12px;z-index:2;display:flex;flex-direction:column}.pp-cap b{font:800 17px var(--font-ui)}.pp-cap small{display:flex;align-items:center;gap:5px;font-size:11px;opacity:.85}.pp-cap small i{width:7px;height:7px;border-radius:50%;background:var(--col);box-shadow:0 0 0 1.5px #fff}
+.ppc.more{background:var(--night-2);border:1.5px dashed var(--line-2);color:var(--fg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.ppc.more::after{display:none}.ppc.more b{font-size:34px;line-height:1}.ppc.more small{font-size:12px;color:var(--fg-3)}
+.wall.disc{grid-template-columns:repeat(3,1fr) !important;gap:6px !important}
+.wall.disc .tile{border-radius:14px}
+.wall.disc .tile .cap{right:6px !important;left:8px;bottom:8px}.wall.disc .tile .cap b{font-size:13.5px !important}.wall.disc .tile .cap small{font-size:10px !important}
+.wall.disc .tile .ini{font-size:40px !important}.wall.disc .tile .mu{transform:scale(.85);transform-origin:top right}.wall.disc .tile .tstk{transform:scale(.85);transform-origin:top left}
+.wall.disc .wave{width:30px;height:30px;font-size:16px;right:6px;bottom:30px}
+.wall-sec h3 .crest.sm{width:24px;height:26px;margin-right:2px}
 /* spots */
 .fc.spots .clubs-in{gap:12px}
 .sp-list{display:flex;flex-direction:column;gap:8px}
@@ -2541,7 +2561,7 @@ function renderPeople(){
   const showQ=browse||!!S.qOpen||!!q;$('#q').hidden=!showQ;
   $('#q').value=S.q;$('#q').placeholder=browse?(early()?'Search by name':'Name, major, school or sport'):'Search your collegers';
   $('#ppl-back').hidden=!browse;$('#ppl-title').textContent=browse?'Discover':'Friends';
-  $('#people-chips').hidden=!browse||early();$('#sport-chips').hidden=!showQ||(browse&&early());
+  $('#people-chips').hidden=!browse||early();$('#sport-chips').hidden=!q;
   $('#people-chips').innerHTML=`<button class="schb all${S.campus==='all'?' on':''}" data-action="filter-campus" data-id="all"><b>All</b><small>${PEOPLE.filter(visible).length}</small></button>`+[...CAMPI].sort((a,b)=>(a.id===S.me.c?-1:b.id===S.me.c?1:count(b.id)-count(a.id))).map(c=>`<button class="schb${S.campus===c.id?' on':''}" data-action="filter-campus" data-id="${c.id}" style="--col:${c.col}">${crest(c.id)}<b>${esc(c.short)}</b><small>${PEOPLE.filter(p=>p.c===c.id&&visible(p)).length}</small></button>`).join('');
   $('#sport-chips').innerHTML=[`<button class="chip${S.sport==='all'?' on':''}" data-action="filter-sport" data-id="all">All</button>`,...SPORTS.map(x=>`<button class="chip${S.sport===x?' on':''}" data-action="filter-sport" data-id="${x}">${SPORT_EMO[x]||''} ${x}</button>`)].join('');
   const mine=C(S.me.c),order=[...CAMPI].sort((a,b)=>(a.id===S.me.c?-1:b.id===S.me.c?1:dist(a,mine)-dist(b,mine)));
@@ -2553,8 +2573,9 @@ function renderPeople(){
     h+=`<section class="fr-sec"><h3>Your people <span style="font:500 13px var(--font-ui);color:var(--fg-3)">${mineSet.size}</span><button class="more" data-action="browse-on">+ find more</button></h3></section>`}
   if(browse&&early()&&!q){h+=`<div class="ghostcard"><b style="display:block;font-size:15px;margin-bottom:4px;color:var(--fg)">Search by name</b>Find someone you already know. The full wall opens when ${esc(C(S.me.c).short)} hits ${FULL_AT}.</div>`+contactsCard(true)}
   else if(browse){order.forEach(c=>{const ps=list.filter(p=>p.c===c.id);if(!ps.length)return;const cc=mono()?` style="color:${c.col}"`:'';
-    h+=`<section class="wall-sec"><h3${cc}><i style="--col:${c.col}"></i>${esc(c.short)}<span>${ps.length}${c.id===S.me.c?' · yours':''}</span></h3><div class="wall disc">${ps.map(p=>tile(p,i++,false,!mineSet.has(p.id))).join('')}</div></section>`})}
-  else if(list.length){const sorted=order.flatMap(c=>list.filter(p=>p.c===c.id));const few=sorted.length<=4,odd=few&&sorted.length%2===1;h+=`<div class="wall mine${few?' few':''}">${sorted.map(p=>tile(p,i++,true)).join('')}${odd?`<button class="tile ph more-tile" data-action="browse-on"><span class="plus">+</span><b>Find more</b><small>${early()?'search by name':`${PEOPLE.filter(visible).length} students · ${CAMPI.length} schools`}</small></button>`:''}</div>`;S._oddTile=odd}
+    h+=`<section class="wall-sec"><h3${cc}>${crest(c.id,'sm')}${esc(c.short)}<span>${ps.length}${c.id===S.me.c?' · yours':''}</span></h3><div class="wall disc">${ps.map(p=>tile(p,i++,false,!mineSet.has(p.id))).join('')}</div></section>`})}
+  else if(list.length&&!q){const sorted=order.flatMap(c=>list.filter(p=>p.c===c.id));h+=`<div class="pp-row">${sorted.map(p=>{const c=C(p.c),stk=tileSticker(p);return `<button class="ppc" data-action="person" data-id="${p.id}" style="--col:${c.col};--h:${hue(p.n)}"><span class="ini">${esc(initials(p.n))}</span>${p.img?`<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">`:''}<span class="a2-sh"></span>${stk?`<span class="tstk${stk.n?' new':''}">${stk.t}</span>`:''}<span class="pp-cap"><b>${esc(p.n.split(' ')[0])}</b><small><i></i>${esc(c.short)}</small></span></button>`}).join('')}<button class="ppc more" data-action="browse-on"><b>+</b><small>find more</small></button></div>`;S._oddTile=false}
+  else if(list.length){const sorted=order.flatMap(c=>list.filter(p=>p.c===c.id));h+=`<div class="wall mine few">${sorted.map(p=>tile(p,i++,true)).join('')}</div>`;S._oddTile=false}
   if(!list.length&&!(browse&&early()&&!q))h+=browse?`<div class="ghostcard">Nobody matches that yet.</div>`:`<div class="ghostcard">Your people show up here once you both add each other. Start with people you already know.</div>`;
   if(!browse){const ids=[...mineSet],evs=EVENTS.filter(ev=>ids.includes(ev.host)||ev.who.some(id=>ids.includes(id)));
     if(!S._oddTile)h+=early()?`<button class="browse-card" data-action="browse-on"><b>Find someone</b><small>search by name ›</small></button>`:`<button class="browse-card" data-action="browse-on"><b>${PEOPLE.filter(visible).length} students · ${new Set(PEOPLE.filter(visible).map(p=>p.c)).size} schools</b><small>${count(S.me.c)} at ${esc(C(S.me.c).short)} · browse everyone ›</small></button>`;S._oddTile=false}
@@ -3133,7 +3154,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v140</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v141</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
