@@ -884,6 +884,15 @@ button.rowp{width:100%;font:inherit;color:inherit;background:none;border:0;borde
 .wall.disc .tile .ini{font-size:40px !important}.wall.disc .tile .mu{transform:scale(.85);transform-origin:top right}.wall.disc .tile .tstk{transform:scale(.85);transform-origin:top left}
 .wall.disc .wave{width:30px;height:30px;font-size:16px;right:6px;bottom:30px}
 .wall-sec h3 .crest.sm{width:24px;height:26px;margin-right:2px}
+/* friends finish */
+.duo{height:auto;min-height:104px;justify-content:space-between}.duo .d-l{position:static !important;margin-bottom:6px}.duo .dv{display:flex;flex-direction:column;gap:2px;margin-top:auto}
+#hype-strip:empty{display:none}
+#drop-strip .drops{overflow:hidden}#drop-strip .drops-row{margin-inline:-14px !important;padding-inline:14px !important;scroll-padding-inline:14px}
+.act-row,.pp-row,.clsrow{scroll-padding-inline:20px}
+.fr-duo{margin:10px 0 4px}
+[data-screen="people"] .fr-sec{margin-top:10px}
+[data-screen="people"] .fr-sec h3{margin-bottom:8px}
+.act2 .a2-lock{max-width:120px;overflow:hidden;text-overflow:ellipsis}
 /* spots */
 .fc.spots .clubs-in{gap:12px}
 .sp-list{display:flex;flex-direction:column;gap:8px}
@@ -2550,7 +2559,7 @@ function friendActivity(mine){const it=[],fn=p=>esc(p.n.split(' ')[0]);
   DROP_SAMPLE.filter(x=>mine.has(x.id)).slice(0,2).forEach(x=>{const p=P(x.id),seen=dropState().seen.includes(x.id);it.push({faces:[p],t:`<b>${fn(p)}</b> dropped a pic`,s:seen?'opened':`${esc(x.w)} · opens once`,th:`photos/${x.img}.jpg`,bl:!seen,a:'drop-open',id:x.id})});
   return it.slice(0,6).map((x,k)=>`<button class="act2${x.bl?' bl':''}" data-action="${x.a}" data-id="${x.id}" style="animation-delay:${k*60}ms">${x.th?`<img src="${x.th}" alt="" loading="lazy" onerror="this.remove()">`:''}<span class="a2-sh"></span><span class="hfaces">${x.faces.map(p=>avatar(p)).join('')}</span><span class="t">${x.t}<small>${x.s}</small></span>${x.bl?'<span class="a2-lock">tap to open</span>':''}</button>`).join('')}
 function meetRow(){const inc=S.inc.map(r=>P(r.pid)).filter(Boolean),ml=meetLeft();
-  return `<div class="fr-duo">${hypeTile()}${inc.length?`<button class="duo add" data-action="to-meet"><i class="d-l">around</i><span class="hfaces">${inc.slice(0,3).map(p=>avatar(p)).join('')}</span><b>${inc.length}</b><small>added you</small></button>`:`<button class="duo around" data-action="to-meet"><i class="d-l">around</i><span class="d-ic"><svg viewBox="0 0 24 24"><rect x="7" y="3.5" width="11" height="15" rx="2.5" transform="rotate(8 12.5 11)"/><rect x="5" y="5" width="11" height="15" rx="2.5"/></svg></span><b>${ml.left}</b><small>new faces today</small></button>`}</div>`}
+  return `<div class="fr-duo">${hypeTile()}${inc.length?`<button class="duo add" data-action="to-meet"><i class="d-l">around</i><span class="hfaces">${inc.slice(0,3).map(p=>avatar(p)).join('')}</span><span class="dv"><b>${inc.length}</b><small>added you</small></span></button>`:`<button class="duo around" data-action="to-meet"><i class="d-l">around</i><span class="d-ic"><svg viewBox="0 0 24 24"><rect x="7" y="3.5" width="11" height="15" rx="2.5" transform="rotate(8 12.5 11)"/><rect x="5" y="5" width="11" height="15" rx="2.5"/></svg></span><span class="dv"><b>${ml.left}</b><small>new faces today</small></span></button>`}</div>`}
 function renderPeople(){
   const q=S.q.trim().toLowerCase(),browse=!!S.browse;
   const nc=convos().length;$('#chat-dot').hidden=!nc;$('#chat-dot').textContent=nc;
@@ -3098,7 +3107,7 @@ function hypeState(){if(!S.hype)S.hype={n:0,until:0,cur:null,used:[],sent:0,inbo
 function hypePool(){const me=S.me,ids=new Set(myIds());const pool=PEOPLE.filter(p=>p.id!=='me'&&p.p!=='discreto'&&(ids.has(p.id)||(p.c===me.c&&visible(p))));return pool.length>=4?pool:PEOPLE.filter(p=>p.p!=='discreto'&&visible(p))}
 function hypeNext(){const h=hypeState();let left=HYPE_Q.map((_,i)=>i).filter(i=>!h.used.includes(i));if(!left.length){h.used=[];left=HYPE_Q.map((_,i)=>i)}const qi=left[Math.floor(Math.random()*left.length)];h.used.push(qi);h.cur={qi,opts:shuffle(hypePool()).slice(0,4).map(p=>p.id),pick:null}}
 const ago=t=>{const m=Math.max(1,Math.round((Date.now()-t)/6e4));return m<60?m+'m':m<1440?Math.round(m/60)+'h':Math.round(m/1440)+'d'};
-function hypeTile(){if(S.notif&&S.notif.inHype===false)return'';const h=hypeState(),nw=h.inbox.filter(x=>x.new).length,wait=h.until>Date.now();return `<button class="duo hype" data-action="hype"><i class="d-l">hype</i><span class="d-ic"><svg viewBox="0 0 24 24"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-4 2.5-5 .2 1.8 1 2.8 2 3.2C11 9.2 11 6 12 3z"/></svg></span><b>${nw?nw:'hype'}</b><small>${nw?(nw===1?'picked you':'picked you'):wait?'new polls soon':'play polls'}</small></button>`}
+function hypeTile(){if(S.notif&&S.notif.inHype===false)return'';const h=hypeState(),nw=h.inbox.filter(x=>x.new).length,wait=h.until>Date.now();return `<button class="duo hype" data-action="hype"><i class="d-l">hype</i><span class="d-ic"><svg viewBox="0 0 24 24"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-4 2.5-5 .2 1.8 1 2.8 2 3.2C11 9.2 11 6 12 3z"/></svg></span><span class="dv"><b>${nw?nw:wait?'soon':'play'}</b><small>${nw?'picked you':wait?'new polls in a bit':'polls about your people'}</small></span></button>`}
 function renderHypeStrip(){const el=$('#hype-strip');if(!el)return;el.innerHTML='';return;if(S.browse||S.notif&&S.notif.inHype===false){el.innerHTML='';return}const h=hypeState(),nw=h.inbox.filter(x=>x.new).length,wait=h.until>Date.now();
   el.innerHTML=`<button class="hypebar" data-action="hype"><span class="hb-ico"><svg viewBox="0 0 24 24"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-4 2.5-5 .2 1.8 1 2.8 2 3.2C11 9.2 11 6 12 3z"/></svg></span><span class="t"><b>Hype</b><small>${nw?`${nw} ${nw===1?'person':'people'} picked you`:wait?'New polls soon':'Quick polls about your collegers. Only nice ones.'}</small></span>${nw?`<span class="hb-n">${nw}</span>`:wait?'<span class="chev">›</span>':'<span class="hb-play">play</span>'}</button>`}
 function renderHype(){const h=hypeState(),view=S.hypeView||'polls',nw=h.inbox.filter(x=>x.new).length;
@@ -3154,7 +3163,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v141</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v142</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
