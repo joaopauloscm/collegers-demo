@@ -2599,14 +2599,15 @@ function renderPeople(){
   if(!browse&&!q)h+=meetRow();
   if(!browse&&!q&&mineSet.size<3)h+=contactsCard(true);
   if(!browse&&!q)h+=classRow();
-  if(!browse){const acts=friendActivity(mineSet);if(acts&&!q)h+=`<section class="fr-sec"><h3>Right now <span class="live" style="display:inline-flex;align-items:center;gap:5px"><i></i>live</span></h3><div class="act-row">${acts}</div></section>`;
-    h+=`<section class="fr-sec"><h3>Your people <span style="font:500 13px var(--font-ui);color:var(--fg-3)">${mineSet.size}</span><button class="more" data-action="browse-on">+ find more</button></h3></section>`}
+  const acts=!browse&&!q?friendActivity(mineSet):'';
+  if(!browse){h+=`<section class="fr-sec"><h3>Your people <span style="font:500 13px var(--font-ui);color:var(--fg-3)">${mineSet.size}</span><button class="more" data-action="browse-on">+ find more</button></h3></section>`}
   if(browse&&early()&&!q){h+=`<div class="ghostcard"><b style="display:block;font-size:15px;margin-bottom:4px;color:var(--fg)">Search by name</b>Find someone you already know. The full wall opens when ${esc(C(S.me.c).short)} hits ${FULL_AT}.</div>`+contactsCard(true)}
   else if(browse){order.forEach(c=>{const ps=list.filter(p=>p.c===c.id);if(!ps.length)return;const cc=mono()?` style="color:${c.col}"`:'';
     h+=`<section class="wall-sec"><h3${cc}>${crest(c.id,'sm')}${esc(c.short)}<span>${ps.length}${c.id===S.me.c?' · yours':''}</span></h3><div class="wall disc">${ps.map(p=>tile(p,i++,false,!mineSet.has(p.id))).join('')}</div></section>`})}
   else if(list.length&&!q){const sorted=order.flatMap(c=>list.filter(p=>p.c===c.id));h+=`<div class="pp-row">${sorted.map(p=>{const c=C(p.c),stk=tileSticker(p);return `<button class="ppc" data-action="person" data-id="${p.id}" style="--col:${c.col};--h:${hue(p.n)}"><span class="ini">${esc(initials(p.n))}</span>${p.img?`<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">`:''}<span class="a2-sh"></span>${stk?`<span class="tstk${stk.n?' new':''}">${stk.t}</span>`:''}<span class="pp-cap"><b>${esc(p.n.split(' ')[0])}</b><small><i></i>${esc(c.short)}</small></span></button>`}).join('')}<button class="ppc more" data-action="browse-on"><b>+</b><small>find more</small></button></div>`;S._oddTile=false}
   else if(list.length){const sorted=order.flatMap(c=>list.filter(p=>p.c===c.id));h+=`<div class="wall mine few">${sorted.map(p=>tile(p,i++,true)).join('')}</div>`;S._oddTile=false}
   if(!list.length&&!(browse&&early()&&!q))h+=browse?`<div class="ghostcard">Nobody matches that yet.</div>`:`<div class="ghostcard">Your people show up here once you both add each other. Start with people you already know.</div>`;
+  if(acts)h+=`<section class="fr-sec"><h3>Right now <span class="live" style="display:inline-flex;align-items:center;gap:5px"><i></i>live</span></h3><div class="act-row">${acts}</div></section>`;
   if(!browse){const ids=[...mineSet],evs=EVENTS.filter(ev=>ids.includes(ev.host)||ev.who.some(id=>ids.includes(id)));
     if(!S._oddTile)h+=early()?`<button class="browse-card" data-action="browse-on"><b>Find someone</b><small>search by name ›</small></button>`:`<button class="browse-card" data-action="browse-on"><b>${PEOPLE.filter(visible).length} students · ${new Set(PEOPLE.filter(visible).map(p=>p.c)).size} schools</b><small>${count(S.me.c)} at ${esc(C(S.me.c).short)} · browse everyone ›</small></button>`;S._oddTile=false}
   $('#people-list').innerHTML=h;{const st=$('#ppl-streak');if(st){const n=streakN(),safe=streakDays().includes(dkey(new Date()));st.innerHTML='';if(0)st.innerHTML=`<button class="hstreak${safe?' safe':''}" data-action="to-drop">🔥 <b>${n}</b>${safe?'':`<small id="hstreak-cd">${untilMidnight().slice(0,5)} left</small>`}</button>`}}renderDrops();renderHypeStrip();$('#drop-strip').hidden=browse;$('#hype-strip').hidden=browse;
@@ -3185,7 +3186,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v144</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v145</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
