@@ -1785,12 +1785,68 @@ button.hrow{width:100%;font:inherit;color:inherit;background:none;border:0;text-
 .thm b{font-weight:600}
 
 @media (prefers-reduced-motion:reduce){.sheet{animation:none}.live i{animation:none}.evdot::before{animation:none;opacity:0}.h-display::after{animation:none}}
+/* ---------- camera + party roll (v146) ---------- */
+.screen.cam{padding:0;gap:0;overflow:hidden;position:relative;background:#000;color:#fff}
+#cam-body{position:absolute;inset:0}
+.cam-wrap{position:absolute;inset:0;overflow:hidden;background:#000;color:#fff}
+.cam-wrap video,.cam-wrap .cam-still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam-wrap video.mirror{transform:scaleX(-1)}
+.cam-wrap .cam-still{display:none;animation:camdrift 14s ease-in-out infinite alternate}
+.cam-wrap.still .cam-still{display:block}.cam-wrap.still video{display:none}
+@keyframes camdrift{from{transform:scale(1.08) translate(-1.5%,-1%)}to{transform:scale(1.15) translate(1.5%,1%)}}
+.cam-top,.cam-bot{position:absolute;left:0;right:0;z-index:2;display:flex;padding:16px}
+.cam-top{top:0;align-items:center;gap:10px;padding-top:max(16px,env(safe-area-inset-top));background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,0))}
+.cam-bot{bottom:0;flex-direction:column;align-items:center;gap:14px;padding-bottom:max(24px,env(safe-area-inset-bottom));background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.62))}
+.cam-ib{width:44px;height:44px;flex:0 0 44px;border-radius:50%;border:0;padding:0;background:rgba(0,0,0,.38);color:#fff;display:grid;place-items:center;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.cam-ib.ghost{visibility:hidden}
+.cam-ib svg,.roll-cam svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cam-title{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.cam-title b{font-family:var(--font-display);font-weight:900;font-size:24px;line-height:1;letter-spacing:.04em;text-transform:uppercase;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.cam-title small{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--font-ui);color:rgba(255,255,255,.82)}
+.cam-title small i{width:7px;height:7px;border-radius:50%;background:#FF3D7F;box-shadow:0 0 8px #FF3D7F;animation:pulse 1.6s infinite}
+.cam-note{position:absolute;z-index:2;left:50%;top:calc(max(16px,env(safe-area-inset-top)) + 62px);transform:translateX(-50%);margin:0;padding:6px 11px;border-radius:999px;background:rgba(0,0,0,.55);font:600 11.5px var(--font-ui);white-space:nowrap}
+.cam-cap{margin:0;font:600 12.5px var(--font-ui);color:rgba(255,255,255,.85);text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.cam-row{width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 6px}
+.cam-shut{width:80px;height:80px;flex:0 0 80px;border-radius:50%;border:4px solid #fff;background:transparent;padding:5px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cam-shut i{display:block;width:100%;height:100%;border-radius:50%;background:#fff;transition:transform .12s}
+.cam-shut:active i{transform:scale(.84)}
+.cam-roll{position:relative;width:44px;height:56px;flex:0 0 44px;border:0;padding:0;background:transparent;cursor:pointer}
+.cam-roll .cr-stk{position:absolute;inset:0;border-radius:6px;border:2px solid #fff;background:#2B2B2B;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.45)}
+.cam-roll .cr-stk:nth-child(1){transform:rotate(-8deg) translate(-3px,1px);opacity:.55}
+.cam-roll .cr-stk:nth-child(2){transform:rotate(6deg) translate(3px,0);opacity:.8}
+.cam-roll .cr-stk img{width:100%;height:100%;object-fit:cover;filter:blur(5px) sepia(.4) brightness(.8)}
+.cam-roll .n{position:absolute;z-index:3;right:-9px;top:-9px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#FF3D7F;color:#fff;font:800 12px/22px var(--font-ui);text-align:center}
+.cam-roll.bump .n{animation:cambump .45s}
+@keyframes cambump{40%{transform:scale(1.4)}}
+.cam-flash{position:absolute;inset:0;z-index:5;background:#fff;opacity:0;pointer-events:none}
+.cam-flash.go{animation:camflash .34s ease-out}
+@keyframes camflash{0%{opacity:.95}100%{opacity:0}}
+.cam-fly{position:absolute;z-index:4;left:50%;top:44%;width:150px;margin-left:-75px;aspect-ratio:3/4;border:3px solid #fff;border-radius:6px;overflow:hidden;background:#222;box-shadow:0 12px 30px rgba(0,0,0,.5);pointer-events:none;transform:translate(0,-50%);animation:camfly .62s cubic-bezier(.55,0,.3,1) forwards}
+.cam-fly img{width:100%;height:100%;object-fit:cover;filter:blur(6px) sepia(.4) brightness(.85)}
+@keyframes camfly{0%{transform:translate(0,-50%) scale(1)}100%{transform:translate(var(--fx),calc(var(--fy) - 50%)) scale(.28) rotate(-8deg);opacity:.25}}
+.roll-row{display:flex;gap:8px;align-items:stretch}
+.roll-row .roll{flex:1;width:auto;min-width:0}
+.roll-cam{flex:0 0 70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:0;border-radius:12px;background:var(--lamp);color:#111;font:700 11.5px var(--font-ui);cursor:pointer}
+.roll-cam svg{width:26px;height:26px}
+[data-theme="mono"] .roll-cam{background:#fff;color:#111;box-shadow:inset 0 0 0 1.5px #111}
+.p-here{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-4px 0 0}
+.p-here>span{display:inline-flex;align-items:center;gap:7px}
+.p-here i{flex:0 0 7px;width:7px;height:7px;border-radius:50%;background:var(--cup);box-shadow:0 0 8px var(--cup);animation:pulse 1.6s infinite}
+.p-here .linkbtn{flex:0 0 auto;padding:0;font-size:13px;font-weight:600;color:var(--fg)}
+.rpic{position:relative}
+.rpic.mine::after{content:'you';position:absolute;left:7px;top:7px;padding:2px 5px;border-radius:4px;background:#FF3D7F;color:#fff;font:700 9px var(--font-ui);letter-spacing:.06em;text-transform:uppercase}
+.rollgrid.open .rpic img{filter:contrast(1.06) saturate(1.12) sepia(.14)}
+.rpic .rp-stamp{display:none;position:absolute;right:8px;bottom:16px;font:700 9px/1 'Courier New',ui-monospace,monospace;letter-spacing:.04em;color:#FF9A3C;text-shadow:0 0 4px rgba(255,110,30,.85)}
+.rollgrid.open .rpic .rp-stamp{display:block}
+.roll-empty{grid-column:1/-1;margin:0}
+@media (prefers-reduced-motion:reduce){.cam-wrap .cam-still{animation:none}.cam-title small i,.p-here i{animation:none}}
 </style>
 
 <div class="stage">
 <aside class="side-ctl" aria-label="Prototype controls"><p>Prototype</p>
   <button type="button" onclick="try{localStorage.removeItem(KEY)}catch(e){};location.reload()">Restart from the start</button>
   <button type="button" onclick="if(!S.me){return}toggleSim(!S.simEmpty)" id="side-sim">Day one mode: off</button>
+  <button type="button" onclick="protoParty()" id="side-party" hidden>At a party: off</button>
   <small>Restart clears everything saved in this browser.</small>
 </aside>
 <div class="phone" id="phone">
@@ -1869,6 +1925,10 @@ button.hrow{width:100%;font:inherit;color:inherit;background:none;border:0;text-
 
   <section class="screen party" data-screen="party">
     <div id="party-body"></div>
+  </section>
+
+  <section class="screen cam" data-screen="cam">
+    <div id="cam-body"></div>
   </section>
 
   <section class="screen" data-screen="quests">
@@ -2541,12 +2601,12 @@ function renderTut(){stopTut();
 function render(){if(!PALS[S.theme])S.theme='mono';document.documentElement.dataset.theme=['med','girly','latino','asia'].includes(S.theme)?'mono':S.theme;document.documentElement.dataset.skin=S.theme;
   const cur=S.stage==='app'?(S.tab==='pv'?'profile-view':S.tab):S.stage;
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.dataset.screen===cur));
-  $('#tabbar').hidden=S.stage!=='app';
+  $('#tabbar').hidden=S.stage!=='app'||S.tab==='cam';if(!(S.stage==='app'&&S.tab==='cam'))stopCam();
   document.querySelectorAll('.tab').forEach(t=>{const on=t.dataset.tab===S.tab||(t.dataset.tab==='people'&&(S.tab==='chats'||S.tab==='chat'||S.tab==='hype'))||(t.dataset.tab==='me'&&S.tab==='quests')||(S.tab==='pv'&&t.dataset.tab===S.pvFrom)||(t.dataset.tab==='college'&&(S.tab==='party'||S.tab==='newparty'||S.tab==='team'||S.tab==='ranked'))||(t.dataset.tab==='me'&&S.tab==='settings')||(t.dataset.tab==='college'&&S.tab==='game');t.classList.toggle('on',on);t.setAttribute('aria-current',on?'page':'false')});
   $('#req-dot').hidden=!S.inc.length;
   if(S.stage==='profile')fillProfile();if(S.stage==='join')renderJoin();sideSync();if(S.stage==='tutorial')renderTut();else stopTut();
   if(S.stage==='welcome')requestAnimationFrame(startSky);else stopSky();if(document.fonts&&!fontsHooked){fontsHooked=true;document.fonts.addEventListener('loadingdone',()=>{if(S.stage==='welcome')fitWordmark();if(S.stage==='app'&&S.tab==='map')repaint()})}
-  if(S.stage==='app'){if(S.tab==='map'){renderMap();liveTick()}else stopLive();if(S.tab==='people')renderPeople();if(S.tab==='college')renderCollege();else stopFeed();if(S.tab==='requests')renderRequests();if(S.tab==='chats')renderChats();if(S.tab==='quests')renderQuests();if(S.tab==='hype')renderHype();if(S.tab==='ranked')renderRanked();if(S.tab==='party')renderParty();else stopParty();if(S.tab==='newparty')renderNewParty();if(S.tab==='team')renderTeam();if(S.tab==='pv')renderPV();if(S.tab==='chat')renderChat();if(S.tab==='me'){renderMe();meT=setInterval(()=>{const c=$('#streak-cd');if(S.tab!=='me'){stopMe();return}if(c)c.textContent=untilMidnight()},1000)}else stopMe();if(S.tab==='settings')renderSettings();if(S.tab==='game')renderGame();else stopGame()}
+  if(S.stage==='app'){if(S.tab==='map'){renderMap();liveTick()}else stopLive();if(S.tab==='people')renderPeople();if(S.tab==='college')renderCollege();else stopFeed();if(S.tab==='requests')renderRequests();if(S.tab==='chats')renderChats();if(S.tab==='quests')renderQuests();if(S.tab==='hype')renderHype();if(S.tab==='ranked')renderRanked();if(S.tab==='party')renderParty();else stopParty();if(S.tab==='newparty')renderNewParty();if(S.tab==='team')renderTeam();if(S.tab==='pv')renderPV();if(S.tab==='chat')renderChat();if(S.tab==='me'){renderMe();meT=setInterval(()=>{const c=$('#streak-cd');if(S.tab!=='me'){stopMe();return}if(c)c.textContent=untilMidnight()},1000)}else stopMe();if(S.tab==='settings')renderSettings();if(S.tab==='game')renderGame();else stopGame();if(S.tab==='cam')renderCam()}
   renderSheet();save();
 }
 function eventCard(ev){const h=host(ev),n=ev.n+(going(ev.id)?1:0);return `<button class="ev${ev.cover?' has-cover':''}" data-action="event" data-id="${ev.id}">${ev.cover?`<img class="cover" src="${ev.cover}" alt="" onerror="this.remove()">`:''}<span class="kind${ev.kind==='esporte'?' sport':''}"><i></i>${ev.kind==='esporte'?'Pickup':'Party'}${ev.access==='convite'?' · invite only':''}</span><h4>${esc(ev.t)}</h4><span class="when">${esc(wl(ev.w))} · ${esc(ev.where)} · ${esc(h.n.split(' ')[0])} (${esc(C(h.c).short)})</span><span class="foot"><span>${n} going</span><span class="btn sm ${going(ev.id)?'on':'primary'}" data-action="go" data-id="${ev.id}">${going(ev.id)?'Going':'I\'m in'}</span></span></button>`}
@@ -2613,6 +2673,69 @@ function renderPeople(){
   $('#people-list').innerHTML=h;{const st=$('#ppl-streak');if(st){const n=streakN(),safe=streakDays().includes(dkey(new Date()));st.innerHTML='';if(0)st.innerHTML=`<button class="hstreak${safe?' safe':''}" data-action="to-drop">🔥 <b>${n}</b>${safe?'':`<small id="hstreak-cd">${untilMidnight().slice(0,5)} left</small>`}</button>`}}renderDrops();renderHypeStrip();$('#drop-strip').hidden=browse;$('#hype-strip').hidden=browse;
   const note=$('#people-note');note.hidden=!hidden;note.textContent=`${hidden} more only visible to their own school`;note.className='disc-note';
 }
+/* ---------- camera + party roll (v146) ---------- */
+const CAMI={x:'<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',flip:'<svg viewBox="0 0 24 24"><path d="M4.5 10A7.8 7.8 0 0 1 18.4 6.6L20 8.5"/><path d="M20 4v4.5h-4.5"/><path d="M19.5 14A7.8 7.8 0 0 1 5.6 17.4L4 15.5"/><path d="M4 20v-4.5h4.5"/></svg>',cam:'<svg viewBox="0 0 24 24"><path d="M3.5 8.5h3.3L8.5 6h7l1.7 2.5h3.3V19h-17z"/><circle cx="12" cy="13.2" r="3.5"/></svg>'};
+const ROLLK='collegers.roll.v1',ROLL_CAP=36,STILLS=['party-crowd','party-club','party-concert','party-girls','party-bar','party-dress','party-cans','party-cups'];
+let ROLLMEM=null,camStream=null,camOn=false,camErr='',camTok=0,camDenied=false,camWarned=false,stillI=0,hidAt=0;
+function rollAll(){if(!ROLLMEM){try{ROLLMEM=JSON.parse(localStorage.getItem(ROLLK))||{}}catch(e){ROLLMEM={}}}return ROLLMEM}
+function rollSave(){try{localStorage.setItem(ROLLK,JSON.stringify(rollAll()));return true}catch(e){return false}}
+const shots=eid=>rollAll()[eid]||[];
+const devAt=ev=>{const d=evDay(ev);return dl(NEXTD[d]||d)+' 4am'};
+const stampOf=t=>{const d=new Date(t||Date.now()),z=n=>String(n).padStart(2,'0');return z(d.getMonth()+1)+' '+z(d.getDate())+" '"+String(d.getFullYear()).slice(2)};
+function hereLive(){const h=S.here;if(!h)return false;if(!(h.until>Date.now())||!E(h.id)||!going(h.id)){S.here=null;return false}return true}
+function checkIn(eid){const first=!hereLive()||S.here.id!==eid;S.here={id:eid,until:Date.now()+4*36e5};return first}
+const camStill=()=>`photos/${STILLS[stillI%STILLS.length]}.jpg`;
+const rollOthers=()=>S.simEmpty?0:11;
+const camSub=ev=>`<i></i>${rollOthers()+shots(ev.id).length} in the roll · develops ${esc(devAt(ev))}`;
+function rollStack(mine){const l=mine.slice(-3),pad=[...Array(3-l.length).fill(null),...l];return pad.map(x=>`<span class="cr-stk">${x?`<img src="${x.d||x.src}" alt="" onerror="this.remove()">`:''}</span>`).join('')}
+function stopCam(){camTok++;if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null}camOn=false;const w=document.getElementById('cam-wrap');if(w)w.classList.remove('cam-on')}
+async function startCam(){if(!$('#cam-v'))return;stopCam();const tok=camTok;camErr='';
+  if(camDenied||!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){camErr=camDenied?'blocked':'none';camFallback();return}
+  try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:S.camFace||'environment',width:{ideal:1280},height:{ideal:1706}},audio:false});
+    if(tok!==camTok||S.tab!=='cam'||document.hidden){st.getTracks().forEach(t=>t.stop());return}
+    camStream=st;camAttach()}
+  catch(e){if(tok!==camTok)return;if(e&&(e.name==='NotAllowedError'||e.name==='SecurityError')){camDenied=true;camErr='blocked'}else camErr='none';camFallback()}}
+function camAttach(){const v=$('#cam-v'),w=$('#cam-wrap');if(!v||!camStream)return;if(v.srcObject!==camStream)v.srcObject=camStream;v.classList.toggle('mirror',(S.camFace||'environment')==='user');const pl=v.play();if(pl&&pl.catch)pl.catch(()=>{});camOn=true;if(w){w.classList.add('cam-on');w.classList.remove('still')}const n=$('#cam-note');if(n)n.hidden=true}
+function camFallback(){const w=$('#cam-wrap');if(!w)return;camOn=false;w.classList.remove('cam-on');w.classList.add('still');const n=$('#cam-note');if(n){n.hidden=false;n.textContent=camErr==='blocked'?'Camera blocked · prototype uses sample shots':'No camera here · prototype uses sample shots'}}
+function camHTML(ev){const mine=shots(ev.id),title=ev.short||ev.t.replace(/ in .*$/,'');
+  return `<div class="cam-wrap" id="cam-wrap"><video id="cam-v" autoplay playsinline muted></video><img class="cam-still" id="cam-still" src="${camStill()}" alt="" onerror="this.remove()"><div class="cam-flash" id="cam-flash"></div>
+    <div class="cam-top"><button class="cam-ib" data-action="cam-close" aria-label="Close camera">${CAMI.x}</button><div class="cam-title"><b>${esc(title)}</b><small id="cam-sub">${camSub(ev)}</small></div><span class="cam-ib ghost" aria-hidden="true"></span></div>
+    <p class="cam-note" id="cam-note" hidden></p>
+    <div class="cam-bot"><p class="cam-cap">Straight to the party roll. Nobody sees it till 4am.</p>
+      <div class="cam-row"><button class="cam-roll" id="cam-roll" data-action="cam-roll" aria-label="Party roll">${rollStack(mine)}<span class="n" id="cam-n"${mine.length?'':' hidden'}>${mine.length}</span></button><button class="cam-shut" data-action="cam-shoot" aria-label="Take a photo"><i></i></button><button class="cam-ib" data-action="cam-flip" aria-label="Flip camera">${CAMI.flip}</button></div></div></div>`}
+function camRefresh(ev,bump){const mine=shots(ev.id),rb=$('#cam-roll'),n=$('#cam-n'),sub=$('#cam-sub');
+  if(rb){rb.querySelectorAll('.cr-stk').forEach(x=>x.remove());rb.insertAdjacentHTML('afterbegin',rollStack(mine));if(bump){rb.classList.remove('bump');void rb.offsetWidth;rb.classList.add('bump')}}
+  if(n){n.hidden=!mine.length;n.textContent=mine.length}if(sub)sub.innerHTML=camSub(ev)}
+function renderCam(){const ev=E(S.party);if(!ev||!going(ev.id)){stopCam();S.tab=ev?'party':'college';render();return}
+  const body=$('#cam-body');if(body.dataset.ev!==ev.id||!$('#cam-wrap')){body.dataset.ev=ev.id;body.innerHTML=camHTML(ev)}else camRefresh(ev);
+  if(camStream)camAttach();else startCam()}
+function camShoot(){const ev=E(S.party);if(!ev)return;const all=rollAll(),arr=all[ev.id]=all[ev.id]||[];
+  if(arr.length>=ROLL_CAP){toast('Roll is full on this phone. Prototype limit.');return}
+  const v=$('#cam-v'),shot={t:Date.now()};
+  if(camOn&&v&&v.videoWidth){const W=480,H=640,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),vw=v.videoWidth,vh=v.videoHeight,r=Math.max(W/vw,H/vh),sw=W/r,sh=H/r;
+    if(v.classList.contains('mirror')){x.translate(W,0);x.scale(-1,1)}x.drawImage(v,(vw-sw)/2,(vh-sh)/2,sw,sh,0,0,W,H);try{shot.d=c.toDataURL('image/jpeg',.72)}catch(e){shot.src=camStill()}}
+  else shot.src=camStill();
+  arr.push(shot);const ok=rollSave();
+  const fl=$('#cam-flash');if(fl){fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go')}
+  try{if(navigator.vibrate)navigator.vibrate(12)}catch(e){}
+  camFly(ev,shot);
+  if(!camOn){stillI++;const st=$('#cam-still');if(st)setTimeout(()=>{st.src=camStill()},300)}
+  if(!ok&&!camWarned){camWarned=true;toast('This phone is out of space. Shots stay until you close the app.')}}
+function camFly(ev,shot){const w=$('#cam-wrap'),rb=$('#cam-roll');if(!w||!rb||matchMedia('(prefers-reduced-motion: reduce)').matches){camRefresh(ev,true);return}
+  const f=document.createElement('div'),wr=w.getBoundingClientRect(),rr=rb.getBoundingClientRect();f.className='cam-fly';f.innerHTML=`<img src="${shot.d||shot.src}" alt="">`;
+  f.style.setProperty('--fx',Math.round(rr.left+rr.width/2-(wr.left+wr.width/2))+'px');f.style.setProperty('--fy',Math.round(rr.top+rr.height/2-(wr.top+wr.height*.44))+'px');
+  w.appendChild(f);setTimeout(()=>{f.remove();camRefresh(ev,true)},620)}
+function camBoot(){if(S.stage==='app'&&hereLive()){if(S.tab!=='cam')S.camFrom=S.tab;S.party=S.here.id;S.tab='cam';S.sheet=null}else if(S.tab==='cam')S.tab=E(S.party)?'party':'college'}
+function camInit(){document.addEventListener('visibilitychange',()=>{if(document.hidden){hidAt=Date.now();if(S.tab==='cam')stopCam();return}
+    const away=hidAt?Date.now()-hidAt:0;hidAt=0;if(S.stage!=='app')return;
+    if(S.tab!=='cam'&&S.tab!=='chat'&&away>=3000&&hereLive()){S.sheet=null;S.camFrom=S.tab;S.party=S.here.id;S.tab='cam';render();return}
+    if(S.tab==='cam')startCam()});
+  window.addEventListener('pagehide',()=>stopCam())}
+function protoParty(on){if(!S.me)return;if(on===undefined)on=!hereLive();
+  if(!on){S.here=null;if(S.tab==='cam'){stopCam();S.tab=S.camFrom&&S.camFrom!=='cam'?S.camFrom:'party'}render();toast('Left the party. The app opens normally again.');return}
+  const ev=EVENTS.find(e=>e.kind==='festa'&&e.access==='convite')||EVENTS.find(e=>e.kind==='festa');
+  if(!ev){render();toast('No party to check into. Host one first.');return}
+  if(!going(ev.id))S.going=[...S.going,ev.id];S.party=ev.id;checkIn(ev.id);S.stage='app';S.sheet=null;if(S.tab!=='cam')S.camFrom='party';S.tab='cam';render();toast(`At ${ev.short||ev.t}. Close the app and come back: it opens on the camera.`)}
 /* ---------- party ---------- */
 const DOW={dom:0,seg:1,ter:2,qua:3,qui:4,sex:5,'sáb':6};
 function nextDate(ev){const d=DOW[evDay(ev)]??5,h=parseInt(ev.w.split(' ')[1])||21,now=new Date(),t=new Date(now);t.setHours(h,0,0,0);let diff=(d-t.getDay()+7)%7;if(diff===0&&t<=now)diff=7;t.setDate(t.getDate()+diff);return t}
@@ -2638,7 +2761,7 @@ function renderParty(){
       </div>
 
       ${inn?`<button class="band" data-action="band"><span class="band-face"><span class="band-l">COLLEGERS</span><span class="band-m">${esc(me.n.split(' ')[0].toUpperCase())} · ${esc(title.toUpperCase())}</span><span class="band-r">#${String(n).padStart(3,'0')}</span></span><span class="code">${code}</span></button><p class="fine" style="margin:-6px 0 0">Your wristband. Tap for the door code.</p>`:''}
-      ${inn?`<button class="roll" data-action="soon-roll"><img class="roll-bg" src="photos/polaroid-3.jpg" alt="" onerror="this.remove()"><span class="holes"></span><span class="roll-in"><b>PARTY ROLL</b><small>Develops ${esc(dl(NEXTD[day]||day))} 4am · only for people who went · ${n} ${n===1?'camera':'cameras'}</small></span><span class="holes"></span></button>`:''}
+      ${inn?`<div class="roll-row"><button class="roll" data-action="soon-roll"><img class="roll-bg" src="photos/polaroid-3.jpg" alt="" onerror="this.remove()"><span class="holes"></span><span class="roll-in"><b>PARTY ROLL</b><small>${shots(ev.id).length?`${shots(ev.id).length} yours · develops`:'Develops'} ${esc(devAt(ev))} · only for people who went · ${n} ${n===1?'camera':'cameras'}</small></span><span class="holes"></span></button><button class="roll-cam" data-action="cam-open" data-id="${ev.id}">${CAMI.cam}<span>Camera</span></button></div>${hereLive()&&S.here.id===ev.id?`<p class="fine p-here"><span><i></i>You're here. Till you leave, the app opens on the camera.</span><button class="linkbtn" data-action="cam-leave">I left</button></p>`:''}`:''}
 
       <section class="p-sec" id="p-list"><h3 class="big">On the list <span>${n} ${n===1?'name':'names'} · ${mine?mine+' from your school':ncol+(ncol===1?' school':' schools')}</span></h3>
         <div class="polas">${pola(isHost?{...me,id:'me'}:h,0,isHost?'you · hosting':'hosting')}${who.map((p,i)=>pola(p,i+1)).join('')}${isHost?'':inn?pola(me,who.length+1,'you'):`<button class="pola empty" data-action="go" data-id="${ev.id}"><span class="ph"><span class="q">?</span></span><b>you</b><small>in?</small></button>`}</div>
@@ -3182,11 +3305,11 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
       <div class="seg" style="margin-top:10px"><button class="${S.preview==='same'?'on':''}" data-action="preview" data-v="same">From your school</button><button class="${S.preview==='other'?'on':''}" data-action="preview" data-v="other">From another school</button></div><div style="margin-top:10px">${meCard(S.preview==='same')}</div>
       <p class="fine" style="margin-top:8px">Your email, number and socials never show. Contact only goes out if both say yes.</p></section>
     <section><p class="lbl">Look</p>${themePicker()}</section>
-    <section><p class="lbl">Prototype</p><div class="group">${sRow('Replay intro','','replay-tut')}${sRow('Redo profile','','reset')}<label class="srow tog"><span>Simulate day one<small>The app with 6 people on it, to check the empty room</small></span><input type="checkbox" data-sim ${S.simEmpty?'checked':''}><i class="sw"></i></label>${sRow('↺ Reset prototype<small>Start over from the first screen with fresh sample data</small>','','proto-reset')}</div></section>
+    <section><p class="lbl">Prototype</p><div class="group">${sRow('Replay intro','','replay-tut')}${sRow('Redo profile','','reset')}<label class="srow tog"><span>Simulate day one<small>The app with 6 people on it, to check the empty room</small></span><input type="checkbox" data-sim ${S.simEmpty?'checked':''}><i class="sw"></i></label><label class="srow tog"><span>At a party now<small>Checks you in at a party. Close and reopen the app and it starts on the camera.</small></span><input type="checkbox" data-party ${hereLive()?'checked':''}><i class="sw"></i></label>${sRow('↺ Reset prototype<small>Start over from the first screen with fresh sample data</small>','','proto-reset')}</div></section>
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v145</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v146</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
@@ -3264,11 +3387,13 @@ function renderSheet(){
     <div class="actions"><button class="btn ghost" data-action="close">Done</button></div>`}
   if(t.type==='roll'&&t.past!=null){const e=PAST[t.past],pics=['party-crowd','party-cups','party-club','party-bar','party-girls','party-concert','party-dress','party-cans'].slice(t.past%3,t.past%3+6);
     h+=`<h3>${esc(e.t)}</h3><p class="sub" style="margin:0">${esc(e.w)} · roll developed · ${pics.length+3} photos · with ${e.with.map(id=>esc(P(id).n.split(' ')[0])).join(', ')}</p><div class="rollgrid open">${pics.map((k,i)=>`<span class="rpic" style="--r:${(i%3-1)*3}deg"><img src="photos/${k}.jpg" alt="" onerror="this.remove()"></span>`).join('')}</div><p class="fine">Only people who went see this roll.</p><div class="actions"><button class="btn ghost" data-action="close">Close</button></div>`}
-  else if(t.type==='roll'){const ev=E(t.id)||{},pics=['party-crowd','party-cups','party-club','party-bar','party-girls','party-concert','party-dress','party-cans'],mine=S.rollN||0,tot=11+mine;
-    h+=`<h3>Party roll</h3><p class="sub" style="margin:0">${tot} photos so far · develops ${esc(dl(NEXTD[evDay(ev)||'sex']||'sáb'))} 4am · only for people who went</p>
-    <div class="rollgrid">${pics.map((k,i)=>`<span class="rpic" style="--r:${(i%3-1)*3}deg"><img src="photos/${k}.jpg" alt="" onerror="this.remove()"></span>`).join('')}</div>
-    <p class="fine">Everyone's photos from the night land here, blurred until morning. Then everyone who went gets the whole roll, and it stays in History.</p>
-    <div class="actions"><button class="btn ghost" data-action="close">Close</button><button class="btn primary" data-action="roll-add">Add a photo${mine?` · ${mine}`:''}</button></div>`}
+  else if(t.type==='roll'){const ev=E(t.id)||{},pics=['party-crowd','party-cups','party-club','party-bar','party-girls','party-concert','party-dress','party-cans'],mine=shots(t.id),tot=rollOthers()+mine.length,dev=!!(S.devd&&S.devd[t.id]);
+    const mineH=mine.slice().reverse().map((x,i)=>`<span class="rpic mine" style="--r:${(i%3-1)*3}deg"><img src="${x.d||x.src}" alt="" onerror="this.remove()"><span class="rp-stamp">${stampOf(x.t)}</span></span>`).join(''),othersH=S.simEmpty?'':pics.map((k,i)=>`<span class="rpic" style="--r:${((i+mine.length)%3-1)*3}deg"><img src="photos/${k}.jpg" alt="" onerror="this.remove()"></span>`).join('');
+    h+=`<h3>Party roll</h3><p class="sub" style="margin:0">${tot} ${tot===1?'photo':'photos'} so far${mine.length?` · ${mine.length} yours`:''} · ${dev?'developed':`develops ${esc(devAt(ev))}`} · only for people who went</p>
+    <div class="rollgrid${dev?' open':''}">${mineH}${othersH}${mineH||othersH?'':'<p class="fine roll-empty">Nothing yet. Take the first shot of the night.</p>'}</div>
+    <p class="fine">${dev?'Prototype preview. In the app the roll opens at 4am for everyone who went, and it stays in History.':'Everyone\'s photos from the night land here, blurred until morning. Then everyone who went gets the whole roll, and it stays in History.'}</p>
+    <div class="actions"><button class="btn ghost" data-action="close">Close</button>${going(t.id)?`<button class="btn primary" data-action="cam-open" data-id="${t.id}">Open camera</button>`:''}</div>
+    <button class="linkbtn" data-action="roll-dev" data-id="${t.id}" style="align-self:center">${dev?'Back to undeveloped':'Develop now (prototype only)'}</button>`}
   if(t.type==='trusted'){const ids=myIds().map(P).filter(Boolean),tr=S.trusted||[];
     h+=`<div class="sos-head"><span class="sos-ico" style="background:#1F9D55"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 11l2 2 4-4"/></svg></span><div><h3>Trusted collegers</h3><p class="sub" style="margin:2px 0 0">Up to three people. When you hold SOS or start Walk me home, they get your location and a heads-up first.</p></div></div>
     <div class="group">${ids.length?ids.map(p=>`<button class="srow" data-action="trust-toggle" data-id="${p.id}">${avatar(p)}<span>${esc(p.n)}<small>${esc(C(p.c).short)}</small></span><span class="sval" style="color:${tr.includes(p.id)?'#1F9D55':'var(--fg-3)'};font-weight:600">${tr.includes(p.id)?'Trusted':'Add'}</span></button>`).join(''):'<p class="fine" style="padding:14px">Only people who already said yes can be trusted.</p>'}</div>
@@ -3319,7 +3444,7 @@ function selectedSports(root){return [...root.querySelectorAll('.chip[aria-press
 function fillProfile(){const me=S.me;if(!me)return;$('#name').value=me.n||'';$('#campus').value=me.c||'np';$('#major').value=me.m||MAJORS[0];$('#year').value=me.y||YEARS[0];[...$('#sports-ob').querySelectorAll('.chip')].forEach(b=>b.setAttribute('aria-pressed',(me.s||[]).includes(b.dataset.text)));const r=$('#f-profile').querySelector(`input[name=priv][value="${me.p||'aberto'}"]`);if(r)r.checked=true}
 
 /* ---------- events ---------- */
-function init(){
+function init(){camInit();
   $('#campus').innerHTML=CAMPI.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
   $('#major').innerHTML=MAJORS.map(m=>`<option>${esc(m)}</option>`).join('');
   $('#year').innerHTML=YEARS.map(y=>`<option>${esc(y)}</option>`).join('');
@@ -3379,7 +3504,7 @@ function init(){
   {let down=0,tx=0;const tw=$('#tut-wrap');tw.addEventListener('pointerdown',e=>{const z=e.target.closest('[data-tap]');if(!z||!tutT)return;down=Date.now();tx=e.clientX;stopTut();tutLeft-=down-tutStart;$('#st')&&$('#st').classList.add('hold')});tw.addEventListener('pointerup',e=>{if(!down)return;const held=Date.now()-down,dx=e.clientX-tx,z=e.target.closest('[data-tap]');down=0;const st=$('#st');st&&st.classList.remove('hold');const i=S.tut||0;if(dx<-40)return tutGo(i+1);if(dx>40)return tutGo(i-1);if(held<250&&z)return tutGo(z.dataset.tap==='prev'?i-1:i+1);tutStart=Date.now();tutT=setTimeout(()=>tutGo(i+1),Math.max(300,tutLeft))});tw.addEventListener('pointercancel',()=>{down=0})}
   $('#phone').addEventListener('input',e=>{if(e.target.id==='j-name'){S.jd.n=e.target.value;const g=document.querySelector('.jgo');if(g)g.disabled=!e.target.value.trim()}});
   $('#phone').addEventListener('keydown',e=>{if(e.target.id==='j-name'&&e.key==='Enter'&&e.target.value.trim()){S.jd.n=e.target.value.trim();S.jn=1;renderJoin()}});
-  $('#phone').addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.sim!==undefined){toggleSim(e.target.checked);return}if(e.target.dataset&&e.target.dataset.notif){S.notif={...(S.notif||{}),[e.target.dataset.notif]:e.target.checked};save();return}if(e.target.name==='priv-me'){S.me.p=e.target.value;if(S.tab==='settings')renderSettings();else renderMe();save();toast('Privacy updated.')}});
+  $('#phone').addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.party!==undefined){protoParty(e.target.checked);return}if(e.target.dataset&&e.target.dataset.sim!==undefined){toggleSim(e.target.checked);return}if(e.target.dataset&&e.target.dataset.notif){S.notif={...(S.notif||{}),[e.target.dataset.notif]:e.target.checked};save();return}if(e.target.name==='priv-me'){S.me.p=e.target.value;if(S.tab==='settings')renderSettings();else renderMe();save();toast('Privacy updated.')}});
   $('#phone').addEventListener('click',e=>{const np=e.target.closest('[data-np-kind],[data-np-day],[data-np-hour],[data-np-rule],[data-np-plus]');if(np){if(np.dataset.npRule!==undefined){np.classList.toggle('on')}else{np.parentElement.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));np.classList.add('on')}return}
     const tab=e.target.closest('[data-tab]');if(tab){S.tab=tab.dataset.tab;S.sheet=null;render();return}
     const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id;
@@ -3430,6 +3555,13 @@ function init(){
     if(a==='soon-roll'){S.sheet={type:'roll',id:S.party};render()}
     if(a==='past-roll'){S.sheet={type:'roll',past:+id};render();return}
     if(a==='roll-add'){S.rollN=(S.rollN||0)+1;save();renderSheet();toast('In the roll. Nobody sees it until 4am.')}
+    if(a==='cam-open'){const eid=id||S.party;if(!going(eid))return;S.party=eid;if(S.tab!=='cam')S.camFrom=S.tab;const first=checkIn(eid);S.sheet=null;S.tab='cam';render();if(first)toast('Checked in. Till you leave, the app opens on the camera.');return}
+    if(a==='cam-close'){stopCam();S.tab=S.camFrom&&S.camFrom!=='cam'?S.camFrom:'party';S.camFrom=null;render();return}
+    if(a==='cam-shoot'){camShoot();return}
+    if(a==='cam-flip'){if(!camOn){toast(camErr?'No camera to flip in this preview.':'One sec, the camera is starting.');return}S.camFace=(S.camFace||'environment')==='user'?'environment':'user';save();startCam();return}
+    if(a==='cam-roll'){S.sheet={type:'roll',id:S.party};renderSheet();return}
+    if(a==='cam-leave'){S.here=null;render();toast('Got it. The app opens normally again.');return}
+    if(a==='roll-dev'){S.devd={...(S.devd||{}),[id]:!(S.devd&&S.devd[id])};save();renderSheet();return}
     if(a==='to-college'){S.tab='college';render()}
     if(a==='chats'){S.tab='chats';S.sheet=null;render()}
     if(a==='to-people'){S.tab='people';render()}
@@ -3574,12 +3706,12 @@ function init(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.sheet){S.sheet=null;render()}});
 }
 /* ---------- welcome: moving photo wall, schools, live count ---------- */
-function sideSync(){const b=document.getElementById('side-sim');if(b){b.textContent='Day one mode: '+(S.simEmpty?'on':'off');b.hidden=!S.me}}
+function sideSync(){const b=document.getElementById('side-sim');if(b){b.textContent='Day one mode: '+(S.simEmpty?'on':'off');b.hidden=!S.me}const pb=document.getElementById('side-party');if(pb){pb.textContent='At a party: '+(hereLive()?'on':'off');pb.hidden=!S.me||S.stage!=='app'}}
 function fillWelcome(){const bg=$('#wl-bg'),lv=$('#wl-live');if(!bg||bg.dataset.on)return;bg.dataset.on=1;
   const cols=[['party-crowd','f14','sport-soccer','m05','party-concert','a11'],['f12','scene-lawn','m02','party-girls','a05','f05'],['sport-bball','f09','party-cups','m08','scene-grads','f03']];
   bg.innerHTML=cols.map((c,i)=>`<div class="wl-col c${i}"><div class="wl-track">${[...c,...c].map(x=>`<img src="photos/${x}.jpg" alt="" loading="eager" onerror="this.remove()">`).join('')}</div></div>`).join('');
   if(lv)lv.innerHTML=`<span class="wl-out"><i></i>${outTonight()||26} out tonight</span><span class="wl-sch">${LAUNCH.map(id=>crest(id,'sm')).join('')}<small>+${CAMPI.length-LAUNCH.length} soon</small></span>`}
-function boot(data){const saved=(data&&data.S)||load();if(saved&&typeof saved==='object'){S={...fresh(),...saved,sheet:null,sel:null};if(!saved.defMono){S.theme='mono';S.defMono=true}}if(S.me){if(!S.me.img||/randomuser/.test(S.me.img))S.me.img='photos/m06.jpg';S.me.img2='photos/scene-lawn.jpg';S.me.img3='photos/party-cups.jpg';S.me.img4='photos/party-crowd.jpg'}(S.evs||[]).forEach(e=>{if(!EVENTS.some(x=>x.id===e.id))EVENTS.push(e)});if(!Array.isArray(S.going))S.going=[];if(!Array.isArray(S.out))S.out=[];if(!Array.isArray(S.inc))S.inc=[];if(!Array.isArray(S.conn))S.conn=[];if(!Array.isArray(S.unlocked))S.unlocked=[S.theme||'festa'];if(S.simEmpty)applySim();init();render();fillWelcome()}
+function boot(data){const saved=(data&&data.S)||load();if(saved&&typeof saved==='object'){S={...fresh(),...saved,sheet:null,sel:null};if(!saved.defMono){S.theme='mono';S.defMono=true}}if(S.me){if(!S.me.img||/randomuser/.test(S.me.img))S.me.img='photos/m06.jpg';S.me.img2='photos/scene-lawn.jpg';S.me.img3='photos/party-cups.jpg';S.me.img4='photos/party-crowd.jpg'}(S.evs||[]).forEach(e=>{if(!EVENTS.some(x=>x.id===e.id))EVENTS.push(e)});if(!Array.isArray(S.going))S.going=[];if(!Array.isArray(S.out))S.out=[];if(!Array.isArray(S.inc))S.inc=[];if(!Array.isArray(S.conn))S.conn=[];if(!Array.isArray(S.unlocked))S.unlocked=[S.theme||'festa'];if(S.simEmpty)applySim();camBoot();init();render();fillWelcome()}
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 </script>
