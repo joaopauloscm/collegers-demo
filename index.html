@@ -893,6 +893,27 @@ button.rowp{width:100%;font:inherit;color:inherit;background:none;border:0;borde
 [data-screen="people"] .fr-sec{margin-top:10px}
 [data-screen="people"] .fr-sec h3{margin-bottom:8px}
 .act2 .a2-lock{max-width:120px;overflow:hidden;text-overflow:ellipsis}
+/* drop band v3 + streak */
+#drop-strip .drops{padding:14px 0 12px}
+#drop-strip .drops-h{align-items:center;padding:0 16px;margin-bottom:10px}
+.dh-l{display:flex;flex-direction:column;gap:1px}
+#drop-strip .drops-h .dh-l b{font:800 17px var(--font-ui);text-transform:none;letter-spacing:-.01em;color:#fff}
+#drop-strip .drops-h .dh-l small{font-size:12px;color:rgba(255,255,255,.65)}
+.dh-cd{display:inline-flex;align-items:center;gap:6px;font:800 13px var(--font-ui);font-variant-numeric:tabular-nums;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 10px;border-radius:999px}
+.dh-cd b{font:inherit !important;color:inherit}
+#drop-strip .drops .dtile.locked .dimg::after{top:-4px;right:-4px;bottom:auto;width:22px;height:22px}
+.dh-cd i{width:7px;height:7px;border-radius:50%;background:#FF3D7F;box-shadow:0 0 8px #FF3D7F;animation:pulse 1.6s infinite}
+#drop-strip .drops-row{margin:0 !important;padding:2px 16px 2px !important;scroll-padding-inline:16px;gap:12px}
+#drop-strip .drops .dtile .dimg{width:62px;height:62px;position:relative}
+#drop-strip .drops .dtile.locked .dimg img{filter:blur(5px) brightness(.85)}
+.fst{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);font:800 11px var(--font-ui);font-style:normal;background:#111;color:#fff;border:1.5px solid #FF8A3D;border-radius:999px;padding:1px 6px;white-space:nowrap;z-index:2}
+#drop-strip .drops .dtile small{margin-top:8px}
+[data-screen="people"] .top.compact>div:first-child{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hstreak{display:inline-flex;align-items:center;gap:5px;font:800 15px var(--font-ui);padding:6px 11px;border-radius:999px;border:0;cursor:pointer;color:#fff;background:linear-gradient(135deg,#FF8A3D,#FF3D7F);box-shadow:0 6px 16px rgba(255,61,127,.3);animation:hsPulse 2.2s ease-in-out infinite}
+.hstreak small{font:700 11px var(--font-ui);opacity:.9}
+.hstreak.safe{animation:none;background:var(--night-2);color:var(--fg);box-shadow:none;border:1px solid var(--line)}
+@keyframes hsPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media (prefers-reduced-motion:reduce){.hstreak{animation:none}}
 /* spots */
 .fc.spots .clubs-in{gap:12px}
 .sp-list{display:flex;flex-direction:column;gap:8px}
@@ -1816,7 +1837,7 @@ button.hrow{width:100%;font:inherit;color:inherit;background:none;border:0;text-
   </section>
 
   <section class="screen" data-screen="people">
-    <header class="top compact"><div><button class="back" id="ppl-back" data-action="browse-off" hidden>‹ Friends</button><h2 class="h-display" id="ppl-title">Friends</h2></div><div class="hdr-r2"><button class="iconbtn2" data-action="q-toggle" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button><button class="chatbtn" data-action="chats"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg>Chats<b id="chat-dot" hidden></b></button></div></header>
+    <header class="top compact"><div><button class="back" id="ppl-back" data-action="browse-off" hidden>‹ Friends</button><h2 class="h-display" id="ppl-title">Friends</h2><span id="ppl-streak"></span></div><div class="hdr-r2"><button class="iconbtn2" data-action="q-toggle" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button><button class="chatbtn" data-action="chats"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg>Chats<b id="chat-dot" hidden></b></button></div></header>
     <div id="drop-strip"></div>
     <div id="hype-strip"></div>
     <input id="q" type="search" placeholder="Name, major, school or sport" autocomplete="off">
@@ -2588,7 +2609,7 @@ function renderPeople(){
   if(!list.length&&!(browse&&early()&&!q))h+=browse?`<div class="ghostcard">Nobody matches that yet.</div>`:`<div class="ghostcard">Your people show up here once you both add each other. Start with people you already know.</div>`;
   if(!browse){const ids=[...mineSet],evs=EVENTS.filter(ev=>ids.includes(ev.host)||ev.who.some(id=>ids.includes(id)));
     if(!S._oddTile)h+=early()?`<button class="browse-card" data-action="browse-on"><b>Find someone</b><small>search by name ›</small></button>`:`<button class="browse-card" data-action="browse-on"><b>${PEOPLE.filter(visible).length} students · ${new Set(PEOPLE.filter(visible).map(p=>p.c)).size} schools</b><small>${count(S.me.c)} at ${esc(C(S.me.c).short)} · browse everyone ›</small></button>`;S._oddTile=false}
-  $('#people-list').innerHTML=h;renderDrops();renderHypeStrip();$('#drop-strip').hidden=browse;$('#hype-strip').hidden=browse;
+  $('#people-list').innerHTML=h;{const st=$('#ppl-streak');if(st){const n=streakN(),safe=streakDays().includes(dkey(new Date()));st.innerHTML=browse?'':`<button class="hstreak${safe?' safe':''}" data-action="to-drop">🔥 <b>${n}</b>${safe?'':`<small id="hstreak-cd">${untilMidnight().slice(0,5)} left</small>`}</button>`}}renderDrops();renderHypeStrip();$('#drop-strip').hidden=browse;$('#hype-strip').hidden=browse;
   const note=$('#people-note');note.hidden=!hidden;note.textContent=`${hidden} more only visible to their own school`;note.className='disc-note';
 }
 /* ---------- party ---------- */
@@ -3126,11 +3147,13 @@ function hypeAdvance(){const h=hypeState();h.n++;h.cur=null;if(h.n>=HYPE_ROUND){
 const DROP_SAMPLE=[{id:'p7',img:'scene-lawn',t:'Library lawn. Avoiding my problem set.',w:'9:12 am'},{id:'p0',img:'party-bar',t:'Coffee number three.',w:'11:40 am'},{id:'p1',img:'sport-soccer',t:'Field is free. Who is coming?',w:'1:05 pm'},{id:'p13',img:'party-cups',t:'Setting up for Saturday.',w:'3:22 pm'},{id:'p26',img:'party-concert',t:'Soundcheck at Metro.',w:'5:48 pm'},{id:'p22',img:'sport-vball',t:'Practice ran long.',w:'6:30 pm'}];
 const today=()=>new Date().toISOString().slice(0,10);
 function dropState(){if(!S.drop||S.drop.day!==today())S.drop={day:today(),mine:null,seen:[]};return S.drop}
+const fStreak=id=>{const h=hsh('st'+id)%34;return h<4?0:h};
+setInterval(()=>{const a=document.getElementById('drop-cd');if(a)a.textContent=untilMidnight();const b=document.getElementById('hstreak-cd');if(b)b.textContent=untilMidnight().slice(0,5)+' left'},1000);
 function renderDrops(){const el=$('#drop-strip');if(!el)return;if(S.browse){el.innerHTML='';return}const d=dropState(),posted=!!d.mine,mine=new Set(myIds());
   const items=DROP_SAMPLE.filter(x=>mine.has(x.id)||true).slice(0,6),first=!items.length;
-  el.innerHTML=`<div class="drops"><div class="drops-h"><b>Today's drop</b><span>${first?(posted?'First at '+esc(C(S.me.c).short)+' today.':'Nobody yet today. First one gets the gold ring.'):posted?'Each one opens once.':'Post yours to open theirs.'}</span></div><div class="drops-row">
+  el.innerHTML=`<div class="drops"><div class="drops-h"><span class="dh-l"><b>Today's drop</b><small>${first?(posted?'First at '+esc(C(S.me.c).short)+' today.':'Nobody yet. First one gets the gold ring.'):posted?'Each one opens once.':'Post yours to open theirs.'}</small></span><span class="dh-cd" title="Drops reset at midnight"><i></i><b id="drop-cd">${untilMidnight()}</b></span></div><div class="drops-row">
     <button class="dtile me${posted?' done':''}${posted&&d.first?' first':''}" data-action="${posted?'drop-mine':'drop-post'}"><span class="dimg">${posted?`<img src="${d.mine}" alt="">`:'<i>+</i>'}</span><small>${posted?'Your drop':'Drop yours'}</small></button>
-    ${items.map(x=>{const pp=P(x.id),seen=d.seen.includes(x.id);return `<button class="dtile${seen?' seen':''}${posted?'':' locked'}" data-action="drop-open" data-id="${x.id}"><span class="dimg">${pp.img?`<img src="${pp.img}" alt="" onerror="this.remove()">`:''}</span><small>${esc(pp.n.split(' ')[0])}</small></button>`}).join('')}
+    ${items.map(x=>{const pp=P(x.id),seen=d.seen.includes(x.id);return `<button class="dtile${seen?' seen':''}${posted?'':' locked'}" data-action="drop-open" data-id="${x.id}"><span class="dimg">${pp.img?`<img src="${pp.img}" alt="" onerror="this.remove()">`:''}${fStreak(x.id)?`<em class="fst">🔥${fStreak(x.id)}</em>`:''}</span><small>${esc(pp.n.split(' ')[0])}</small></button>`}).join('')}
   </div></div>`}
 function openDrop(id){const d=dropState(),x=DROP_SAMPLE.find(z=>z.id===id),pp=P(id),v=$('#dropview');
   v.innerHTML=`<div class="dv-bar"><i id="dv-prog"></i></div><div class="dv-head">${avatar(pp)}<span><b>${esc(pp.n.split(' ')[0])}</b><small>${esc(x.w)} · ${esc(C(pp.c).short)}</small></span><button class="dv-x" data-action="drop-close">×</button></div><img class="dv-img" src="photos/${x.img}.jpg" alt=""><p class="dv-cap">${esc(x.t)}</p><p class="dv-once">Opens once. Gone when you close it.</p>`;
@@ -3163,7 +3186,7 @@ function renderSettings(){const me=S.me,c=C(me.c),priv={aberto:'Open to everyone
     <section><p class="lbl">Legal</p><div class="group">
       ${sRow('Terms of Service','','soon-legal')}${sRow('Privacy Policy','','soon-legal')}${sRow('Community Guidelines','','soon-legal')}${sRow('Licenses','','soon-legal')}</div></section>
     <section><div class="group">${sRow('Log out','','soon-legal')}<button class="srow danger" data-action="soon-legal"><span>Delete account</span></button></div>
-      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v142</p></section>
+      <p class="fine" style="margin-top:8px;text-align:center">Collegers prototype · v143</p></section>
   </div>`}
 const LIVE={};let liveT=null;
 const evLive=ev=>ev.n+(going(ev.id)?1:0)+(LIVE[ev.id]||0);
